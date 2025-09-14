@@ -1,23 +1,17 @@
-// db.js
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
-import dotenv from "dotenv";
-import fs from "fs";
-import path from "path";
-
+import Database from 'better-sqlite3';
+import fs from 'fs';
+import path from 'path';
+import dotenv from 'dotenv';
 dotenv.config();
 
-const dataDir = path.join(process.cwd(), "data");
+const dataDir = path.join(process.cwd(), 'data');
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
 
-const dbPath = process.env.DATABASE_PATH || "./data/devices.db";
+const dbPath = process.env.DATABASE_PATH || './data/devices.db';
+const db = new Database(dbPath);
 
-const db = await open({
-  filename: dbPath,
-  driver: sqlite3.Database,
-});
-
-await db.exec(`
+db.pragma('journal_mode = WAL');
+db.exec(`
 CREATE TABLE IF NOT EXISTS devices (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   serial TEXT NOT NULL,

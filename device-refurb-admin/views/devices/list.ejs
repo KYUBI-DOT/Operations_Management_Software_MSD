@@ -1,0 +1,11 @@
+<%- include('../partials/header') %>
+
+<h2>All Devices</h2>
+
+<ul>
+  <% devices.forEach(d => { %>
+    <li><%= d.serial %> - <%= d.model %> - Status: <%= d.status %> - Grade: <%= d.grade || '-' %></li>
+  <% }) %>
+</ul>
+
+<%- include('../partials/footer') %>

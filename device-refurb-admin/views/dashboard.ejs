@@ -1,0 +1,41 @@
+<%- include('../partials/header') %>
+
+<h2>Admin Dashboard</h2>
+
+<table border="1" cellpadding="8">
+  <tr>
+    <th>ID</th><th>Serial</th><th>Model</th><th>Status</th><th>Grade</th><th>Price</th><th>Notes</th><th>Actions</th>
+  </tr>
+  <% devices.forEach(d => { %>
+    <tr>
+      <td><%= d.id %></td>
+      <td><%= d.serial %></td>
+      <td><%= d.model %></td>
+      <td><%= d.status %></td>
+      <td><%= d.grade || '-' %></td>
+      <td><%= d.price || '-' %></td>
+      <td><%= d.notes %></td>
+      <td>
+        <form action="/devices/<%= d.id %>/update" method="POST">
+          <select name="status">
+            <option value="intake" <%= d.status==='intake'?'selected':'' %>>Intake</option>
+            <option value="wiping" <%= d.status==='wiping'?'selected':'' %>>Wiping</option>
+            <option value="wiped" <%= d.status==='wiped'?'selected':'' %>>Wiped</option>
+            <option value="resold" <%= d.status==='resold'?'selected':'' %>>Resold</option>
+          </select>
+          <select name="grade">
+            <option value="">-</option>
+            <option value="A" <%= d.grade==='A'?'selected':'' %>>A</option>
+            <option value="B" <%= d.grade==='B'?'selected':'' %>>B</option>
+            <option value="C" <%= d.grade==='C'?'selected':'' %>>C</option>
+          </select>
+          <input type="number" step="0.01" name="price" value="<%= d.price || '' %>" placeholder="Price">
+          <input type="text" name="notes" value="<%= d.notes || '' %>" placeholder="Notes">
+          <button type="submit">Update</button>
+        </form>
+      </td>
+    </tr>
+  <% }) %>
+</table>
+
+<%- include('../partials/footer') %>

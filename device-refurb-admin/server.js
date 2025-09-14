@@ -8,19 +8,20 @@ import methodOverride from "method-override";
 
 import adminRoutes from "./routes/admin.js";
 import devicesRoutes from "./routes/devices.js";
+import revenueRoutes from "./routes/revenue.js";
 
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();                    
+const app = express();
 const PORT = process.env.PORT || 3000;
 
 // views + static
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-app.use(express.static(path.join(__dirname, "public"))); // ← now safe
+app.use(express.static(path.join(__dirname, "public")));
 
 // middleware
 app.use(morgan("dev"));
@@ -28,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
 
-// simple demo "auth"
+// simple demo "auth" — must be before routes
 app.use((req, res, next) => {
   res.locals.isAuthed =
     (req.query.pass && req.query.pass === process.env.ADMIN_PASS) || false;
@@ -38,6 +39,8 @@ app.use((req, res, next) => {
 // routes
 app.use("/admin", adminRoutes);
 app.use("/devices", devicesRoutes);
+app.use("/revenue", revenueRoutes);
+
 app.get("/", (req, res) => res.redirect("/admin"));
 
 app.listen(PORT, () =>

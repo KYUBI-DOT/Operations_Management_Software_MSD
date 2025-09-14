@@ -1,0 +1,114 @@
+<%- include('../partials/header') %>
+
+<h1 class="page-title">Revenue</h1>
+<p class="subtle">Sales performance for resold devices.</p>
+
+<section class="grid" style="margin-top:18px;">
+  <div class="card">
+    <p class="kpi-title">Total Devices Sold</p>
+    <p class="kpi-value"><%= kpi.soldCount %></p>
+    <div class="kpi-chip">Count of resold items</div>
+  </div>
+  <div class="card">
+    <p class="kpi-title">Total Revenue</p>
+    <p class="kpi-value">$<%= kpi.totalRevenue.toFixed(2) %></p>
+    <div class="kpi-chip">Sum of sale prices</div>
+  </div>
+  <div class="card">
+    <p class="kpi-title">Average Price</p>
+    <p class="kpi-value">$<%= kpi.avgPrice.toFixed(2) %></p>
+    <div class="kpi-chip">Per resold device</div>
+  </div>
+  <div class="card">
+    <p class="kpi-title">Best Month</p>
+    <p class="kpi-value"><%= kpi.bestMonth ? kpi.bestMonth.ym : '—' %></p>
+    <div class="kpi-chip">
+      <%= kpi.bestMonth ? ('$' + Number(kpi.bestMonth.revenue).toFixed(2)) : 'No data' %>
+    </div>
+  </div>
+</section>
+
+<h2 style="margin:22px 0 10px">Revenue Over Time</h2>
+<div class="table-wrap" style="padding:10px 10px 2px">
+  <canvas id="revChart" height="90"></canvas>
+</div>
+
+<h3 style="margin:22px 0 10px">Monthly Breakdown</h3>
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>Month</th><th>Devices Sold</th><th>Revenue</th></tr>
+    </thead>
+    <tbody>
+      <% if (chart.labels.length === 0) { %>
+        <tr><td colspan="3" class="subtle">No sales yet.</td></tr>
+      <% } %>
+      <% for (let i = 0; i < chart.labels.length; i++) { %>
+        <tr>
+          <td><%= chart.labels[i] %></td>
+          <td><%= chart.sold[i] %></td>
+          <td>$<%= Number(chart.revenue[i]).toFixed(2) %></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Chart.js (lightweight CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  const labels = <%- JSON.stringify(chart.labels) %>;
+  const revenue = <%- JSON.stringify(chart.revenue) %>;
+  const sold = <%- JSON.stringify(chart.sold) %>;
+
+  const ctx = document.getElementById('revChart').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Revenue (AUD)',
+          data: revenue,
+          tension: 0.35,
+          borderWidth: 2,
+          pointRadius: 2
+        },
+        {
+          label: 'Units Sold',
+          data: sold,
+          yAxisID: 'y2',
+          tension: 0.35,
+          borderWidth: 2,
+          pointRadius: 2
+        }
+      ]
+    },
+    options: {
+      plugins: {
+        legend: { labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text') } },
+        tooltip: { mode: 'index', intersect: false }
+      },
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--muted') }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--border') },
+          ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--muted') }
+        },
+        y2: {
+          position: 'right',
+          beginAtZero: true,
+          grid: { display: false },
+          ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--muted') }
+        }
+      }
+    }
+  });
+</script>
+
+<%- include('../partials/footer') %>

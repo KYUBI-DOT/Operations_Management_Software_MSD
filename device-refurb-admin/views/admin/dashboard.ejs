@@ -1,34 +1,71 @@
 <%- include('../partials/header') %>
 
-<h1>Admin Dashboard</h1>
+<h1 class="page-title">Admin Dashboard</h1>
+<p class="subtle">Overview of intake, wiping, wiped and resold devices.</p>
 
-<% if (authHint) { %>
-  <p class="hint">For write actions during testing, append <code>?pass=<%= process.env.ADMIN_PASS %></code> to URLs.</p>
-<% } %>
-
-<section class="grid-4">
-  <div class="card"><h3>Intake</h3><p><%= stats.intake %></p></div>
-  <div class="card"><h3>Wiping</h3><p><%= stats.wiping %></p></div>
-  <div class="card"><h3>Wiped</h3><p><%= stats.wiped %></p></div>
-  <div class="card"><h3>Resold</h3><p><%= stats.resold %></p></div>
+<!-- KPI CARDS -->
+<section class="grid" style="margin-top:18px;">
+  <div class="card">
+    <p class="kpi-title">Intake</p>
+    <p class="kpi-value"><%= (stats && stats.intake) || 0 %></p>
+    <div class="kpi-chip">New devices ready for processing</div>
+  </div>
+  <div class="card">
+    <p class="kpi-title">Data Deletion In Progress</p>
+    <p class="kpi-value"><%= (stats && stats.wiping) || 0 %></p>
+    <div class="kpi-chip">Secure wipe running</div>
+  </div>
+  <div class="card">
+    <p class="kpi-title">Data Deleted (Wiped)</p>
+    <p class="kpi-value"><%= (stats && stats.wiped) || 0 %></p>
+    <div class="kpi-chip">Ready for grading (A/B/C)</div>
+  </div>
+  <div class="card">
+    <p class="kpi-title">Resold</p>
+    <p class="kpi-value"><%= (stats && stats.resold) || 0 %></p>
+    <div class="kpi-chip">Revenue recognized</div>
+  </div>
 </section>
 
-<h2>Recent</h2>
-<table class="table">
-  <thead><tr><th>ID</th><th>Serial</th><th>Model</th><th>Status</th><th>Grade</th><th>Price</th><th>Date</th></tr></thead>
-  <tbody>
-  <% (latest || []).forEach(r => { %>
-    <tr>
-      <td><%= r.id %></td>
-      <td><%= r.serial %></td>
-      <td><%= r.model %></td>
-      <td><%= r.status %></td>
-      <td><%= r.grade || '-' %></td>
-      <td><%= r.price != null ? ('$' + r.price) : '-' %></td>
-      <td><%= r.intake_date %></td>
-    </tr>
-  <% }) %>
-  </tbody>
-</table>
+<!-- RECENT TABLE -->
+<h2 style="margin:22px 0 10px">Recent Activity</h2>
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th><th>Serial</th><th>Model</th><th>Status</th><th>Grade</th><th>Price</th><th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% (latest || []).forEach(r => { %>
+        <tr>
+          <td><%= r.id %></td>
+          <td><%= r.serial %></td>
+          <td><%= r.model %></td>
+          <td>
+            <span class="badge <%= r.status %>"><%= r.status %></span>
+          </td>
+          <td>
+            <% if (r.grade) { %>
+              <span class="grade <%= r.grade %>"><%= r.grade %></span>
+            <% } else { %>
+              <span class="subtle">–</span>
+            <% } %>
+          </td>
+          <td><%= r.price != null ? ('$' + r.price) : '–' %></td>
+          <td><%= r.intake_date %></td>
+        </tr>
+      <% }) %>
+      <% if (!latest || latest.length === 0) { %>
+        <tr><td colspan="7" class="subtle">No activity yet.</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
 
+<p style="margin-top:16px" class="subtle">
+  Tip: for write actions during testing, append <code>?pass=<%= process.env.ADMIN_PASS %></code> to URLs.
+</p>
+
+<div class="footer">© 2025 Device Refurb Admin</div>
 <%- include('../partials/footer') %>

@@ -28,3 +28,44 @@ await insert.run('SN-1004', 'Pixel 6', '2025-09-04', 'wiped', 'B', null, 'Minor 
 await insert.run('SN-1005', 'MacBook Pro 2019', '2025-09-05', 'resold', 'C', 650, 'Dented corner');
 
 console.log('✅ Database reset and seeded.');
+// scripts/resetDb.js
+import sqlite3 from "sqlite3";
+import { open } from "sqlite";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+async function resetDb() {
+  const db = await open({
+    filename: path.join(__dirname, "../data/devices.db"),
+    driver: sqlite3.Database
+  });
+
+  await db.exec(`
+    DROP TABLE IF EXISTS devices;
+    CREATE TABLE devices (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT,
+      status TEXT, -- e.g. "data_deleted", "in_progress"
+      grade TEXT   -- A, B, or C
+    );
+  `);
+
+  await db.run(
+    `INSERT INTO devices (name, status, grade) VALUES
+     ('iPhone 12', 'data_deleted', 'A'),
+     ('Samsung Galaxy S21', 'in_progress', NULL),
+     ('Dell Laptop', 'data_deleted', 'B'),
+     ('iPad Air', 'data_deleted', 'C')`
+  );
+
+  console.log("✅ Database reset and seeded.");
+  await db.close();
+}
+
+resetDb().catch((err) => {
+  console.error("❌ Error resetting DB:", err);
+  process.exit(1);
+});

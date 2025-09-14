@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="utf-8" />
   <title>Device Refurb Admin</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
-  <header>
-    <h1>Device Refurb Admin</h1>
-    <nav>
-      <a href="/admin?pass=<%= process.env.ADMIN_PASS %>">Dashboard</a> |
-      <a href="/devices">Devices</a>
-    </nav>
-  </header>
-  <main>
+<header class="nav">
+  <a href="/admin?pass=<%= process.env.ADMIN_PASS %>">Dashboard</a>
+  <a href="/devices?pass=<%= process.env.ADMIN_PASS %>">All Devices</a>
+  <a href="/devices?status=intake&pass=<%= process.env.ADMIN_PASS %>">Intake</a>
+  <a href="/devices?status=wiping&pass=<%= process.env.ADMIN_PASS %>">Wiping</a>
+  <a href="/devices?status=wiped&pass=<%= process.env.ADMIN_PASS %>">Wiped</a>
+  <a href="/devices?status=resold&pass=<%= process.env.ADMIN_PASS %>">Resold</a>
+  <a href="/devices/new?pass=<%= process.env.ADMIN_PASS %>">+ New</a>
+</header>
+<main class="container">

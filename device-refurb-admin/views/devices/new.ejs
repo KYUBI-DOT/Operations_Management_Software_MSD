@@ -1,0 +1,12 @@
+<%- include('../partials/header') %>
+
+<h1>New Device</h1>
+<form method="post" action="/devices?pass=<%= process.env.ADMIN_PASS %>" class="form">
+  <label>Serial<input name="serial" required /></label>
+  <label>Model<input name="model" required /></label>
+  <label>Intake Date<input type="date" name="intake_date" required /></label>
+  <label>Notes<textarea name="notes"></textarea></label>
+  <button type="submit">Create</button>
+</form>
+
+<%- include('../partials/footer') %>

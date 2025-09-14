@@ -1,23 +1,22 @@
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-import dotenv from 'dotenv';
-import fs from 'fs';
-import path from 'path';
+// db.js
+import sqlite3 from "sqlite3";
+import { open } from "sqlite";
+import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 
 dotenv.config();
 
-const dataDir = path.join(process.cwd(), 'data');
+const dataDir = path.join(process.cwd(), "data");
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
 
-const dbPath = process.env.DATABASE_PATH || './data/devices.db';
+const dbPath = process.env.DATABASE_PATH || "./data/devices.db";
 
-// Open a single shared connection
 const db = await open({
   filename: dbPath,
   driver: sqlite3.Database,
 });
 
-// Schema
 await db.exec(`
 CREATE TABLE IF NOT EXISTS devices (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,4 +33,3 @@ CREATE INDEX IF NOT EXISTS idx_model ON devices(model);
 `);
 
 export default db;
-

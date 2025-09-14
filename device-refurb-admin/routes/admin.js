@@ -1,57 +1,37 @@
-import { Router } from 'express';
-import db from '../db.js';
+import { Router } from "express";
+import db from "../db.js";
 
 const router = Router();
 
-router.get('/', async (req, res) => {
-  const status = ['intake','wiping','wiped','resold'].includes(req.query.status) ? req.query.status : null;
-  const q = req.query.q ? `%${req.query.q}%` : null;
+router.get("/", async (req, res) => {
+  // Optional: show a friendly message if not authed
+  if (!res.locals.isAuthed) {
+    return res.render("admin/dashboard", {
+      stats: { intake: 0, wiping: 0, wiped: 0, resold: 0 },
+      latest: [],
+      authHint: true,
+    });
+  }
 
-  const rows = await db.all(`
-    SELECT id, serial, model, status, grade, price, intake_date, COALESCE(notes,'') AS notes
+  const counts = await db.all(
+    `SELECT status, COUNT(*) AS total FROM devices GROUP BY status;`
+  );
+  const map = Object.fromEntries(counts.map((c) => [c.status, c.total]));
+  const stats = {
+    intake: map.intake || 0,
+    wiping: map.wiping || 0,
+    wiped: map.wiped || 0,
+    resold: map.resold || 0,
+  };
+
+  const latest = await db.all(`
+    SELECT id, serial, model, status, grade, price, intake_date
     FROM devices
-    WHERE (? IS NULL OR status = ?)
-      AND (? IS NULL OR model LIKE ? OR serial LIKE ?)
-    ORDER BY id DESC;
-  `, [status, status, q, q, q]);
+    ORDER BY id DESC
+    LIMIT 8;
+  `);
 
-  res.render('devices/list', { devices: rows, filter: { status, q: req.query.q || '' } });
-});
-
-// Update from dashboard form
-router.post('/:id/update', async (req, res) => {
-  if (!res.locals.isAuthed) return res.status(403).send('Auth required (?pass=...)');
-  const { status, grade, price, notes } = req.body;
-  await db.run(`
-    UPDATE devices
-    SET status = ?, grade = ?, price = ?, notes = ?
-    WHERE id = ?;
-  `, [status, grade || null, price ? Number(price) : null, notes || null, req.params.id]);
-  res.redirect('/admin?pass=' + process.env.ADMIN_PASS);
-});
-
-// Quick status updates
-router.post('/:id/status', async (req, res) => {
-  if (!res.locals.isAuthed) return res.status(403).send('Auth required');
-  const { status } = req.body;
-  await db.run(`UPDATE devices SET status=? WHERE id=?;`, [status, req.params.id]);
-  res.redirect('/devices?status=' + status + '&pass=' + process.env.ADMIN_PASS);
-});
-
-// Grade
-router.post('/:id/grade', async (req, res) => {
-  if (!res.locals.isAuthed) return res.status(403).send('Auth required');
-  const { grade } = req.body;
-  await db.run(`UPDATE devices SET grade=? WHERE id=?;`, [grade, req.params.id]);
-  res.redirect('/devices?status=wiped&pass=' + process.env.ADMIN_PASS);
-});
-
-// Resell
-router.post('/:id/resell', async (req, res) => {
-  if (!res.locals.isAuthed) return res.status(403).send('Auth required');
-  const { price } = req.body;
-  await db.run(`UPDATE devices SET status='resold', price=? WHERE id=?;`, [price ? Number(price) : null, req.params.id]);
-  res.redirect('/devices?status=resold&pass=' + process.env.ADMIN_PASS);
+  res.render("admin/dashboard", { stats, latest, authHint: false });
 });
 
 export default router;

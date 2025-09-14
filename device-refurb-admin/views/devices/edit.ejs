@@ -1,0 +1,28 @@
+<%- include('../partials/header') %>
+
+<h1>Edit Device #<%= d.id %></h1>
+<form method="post" action="/devices/<%= d.id %>/update?pass=<%= process.env.ADMIN_PASS %>" class="form">
+  <label>Serial<input name="serial" value="<%= d.serial %>" required /></label>
+  <label>Model<input name="model" value="<%= d.model %>" required /></label>
+  <label>Intake Date<input name="intake_date" type="date" value="<%= d.intake_date %>" required /></label>
+  <label>Status>
+    <select name="status">
+      <% ['intake','wiping','wiped','resold'].forEach(s => { %>
+        <option value="<%= s %>" <%= d.status===s?'selected':'' %>><%= s %></option>
+      <% }) %>
+    </select>
+  </label>
+  <label>Grade
+    <select name="grade">
+      <option value=""></option>
+      <option value="A" <%= d.grade==='A'?'selected':'' %>>A</option>
+      <option value="B" <%= d.grade==='B'?'selected':'' %>>B</option>
+      <option value="C" <%= d.grade==='C'?'selected':'' %>>C</option>
+    </select>
+  </label>
+  <label>Price<input name="price" type="number" step="0.01" value="<%= d.price ?? '' %>" /></label>
+  <label>Notes<textarea name="notes"><%= d.notes || '' %></textarea></label>
+  <button type="submit">Save</button>
+</form>
+
+<%- include('../partials/footer') %>

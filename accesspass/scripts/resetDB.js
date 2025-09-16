@@ -1,46 +1,56 @@
+// scripts/resetDb.js
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
-import path from "path";
-import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const init = async () => {
+  const db = await open({
+    filename: "./data/accesspass.db",
+    driver: sqlite3.Database,
+  });
 
-const db = await open({
-  filename: path.join(__dirname, "../data/accesspass.db"),
-  driver: sqlite3.Database
-});
+  // Drop and recreate tables
+  await db.exec(`
+    DROP TABLE IF EXISTS requests;
+    DROP TABLE IF EXISTS analytics;
 
-await db.exec(`DROP TABLE IF EXISTS requests;`);
-await db.exec(`
-CREATE TABLE requests (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  employee_name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  system TEXT NOT NULL,
-  reason TEXT,
-  status TEXT NOT NULL CHECK(status IN ('pending','approved','denied','revoked')) DEFAULT 'pending',
-  created_at TEXT NOT NULL DEFAULT (DATE('now')),
-  decided_at TEXT,
-  decision_notes TEXT
-);
-CREATE INDEX IF NOT EXISTS idx_status ON requests(status);
-CREATE INDEX IF NOT EXISTS idx_system ON requests(system);
-`);
+    CREATE TABLE requests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_name TEXT NOT NULL,
+      access_area TEXT NOT NULL,
+      status TEXT CHECK(status IN ('pending','approved','denied')) DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 
-const seed = db.prepare(`
-  INSERT INTO requests (employee_name,email,system,reason,status,created_at,decided_at,decision_notes)
-  VALUES (?,?,?,?,?,?,?,?)
-`);
+    CREATE TABLE analytics (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      metric TEXT NOT NULL,
+      value INTEGER NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
 
-const rows = [
-  ["Priya Kumar","priya@corp.com","GitHub","New project repo", "pending","2025-09-10", null, null],
-  ["Alex Tan","alex@corp.com","Jira","Backlog access", "approved","2025-09-08","2025-09-09","Approved for project A"],
-  ["Sara Lee","sara@corp.com","VPN","Remote work", "denied","2025-09-05","2025-09-06","Need manager approval"],
-  ["John Kim","john@corp.com","GitHub","PR reviews", "approved","2025-09-01","2025-09-02","OK"],
-  ["Maya Roy","maya@corp.com","Jira","Read-only board", "revoked","2025-08-20","2025-09-01","Contract ended"]
-];
+  // Seed requests
+  const insertRequest = await db.prepare(`
+    INSERT INTO requests (user_name, access_area, status)
+    VALUES (?, ?, ?)
+  `);
 
-for (const r of rows) await seed.run(r);
-console.log("✅ DB reset & seeded.");
-await db.close();
+  await insertRequest.run("Alice", "Server Room", "approved");
+  await insertRequest.run("Bob", "Finance Office", "pending");
+  await insertRequest.run("Charlie", "Data Center", "denied");
+
+  // Seed analytics
+  const insertMetric = await db.prepare(`
+    INSERT INTO analytics (metric, value)
+    VALUES (?, ?)
+  `);
+
+  await insertMetric.run("total_requests", 3);
+  await insertMetric.run("approved_requests", 1);
+  await insertMetric.run("denied_requests", 1);
+
+  console.log("✅ Database reset and seeded.");
+  await db.close();
+};
+
+init();

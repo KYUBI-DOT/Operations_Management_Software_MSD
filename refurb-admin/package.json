@@ -1,21 +1,21 @@
 {
   "name": "refurb-admin",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Admin app to intake devices, track secure wipe, grade (A/B/C) and resell.",
+  "type": "module",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "db:reset": "node scripts/resetDb.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "dotenv": "^17.2.2",
+    "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
-    "express": "^5.1.0",
+    "express": "^4.19.2",
     "method-override": "^3.0.0",
-    "morgan": "^1.10.1",
-    "sqlite": "^5.1.1",
+    "morgan": "^1.10.0",
+    "sqlite": "^5.1.6",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {

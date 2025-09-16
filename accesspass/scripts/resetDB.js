@@ -2,55 +2,49 @@
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 
-const init = async () => {
+async function reset() {
   const db = await open({
     filename: "./data/accesspass.db",
     driver: sqlite3.Database,
   });
 
-  // Drop and recreate tables
   await db.exec(`
+    PRAGMA foreign_keys = ON;
+
     DROP TABLE IF EXISTS requests;
     DROP TABLE IF EXISTS analytics;
 
-    CREATE TABLE requests (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_name TEXT NOT NULL,
-      access_area TEXT NOT NULL,
-      status TEXT CHECK(status IN ('pending','approved','denied')) DEFAULT 'pending',
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+     CREATE TABLE requests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user TEXT,
+    system TEXT,  
+    status TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 
     CREATE TABLE analytics (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      metric TEXT NOT NULL,
-      value INTEGER NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      metric     TEXT NOT NULL,
+      value      INTEGER NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (DATE('now'))
     );
   `);
 
-  // Seed requests
-  const insertRequest = await db.prepare(`
-    INSERT INTO requests (user_name, access_area, status)
-    VALUES (?, ?, ?)
-  `);
+  // seed requests
+  await db.run(`INSERT INTO requests (user_name, access_area, status) VALUES ('Alice','Server Room','approved')`);
+  await db.run(`INSERT INTO requests (user_name, access_area, status) VALUES ('Bob','Finance Office','pending')`);
+  await db.run(`INSERT INTO requests (user_name, access_area, status) VALUES ('Charlie','Data Center','denied')`);
 
-  await insertRequest.run("Alice", "Server Room", "approved");
-  await insertRequest.run("Bob", "Finance Office", "pending");
-  await insertRequest.run("Charlie", "Data Center", "denied");
-
-  // Seed analytics
-  const insertMetric = await db.prepare(`
-    INSERT INTO analytics (metric, value)
-    VALUES (?, ?)
-  `);
-
-  await insertMetric.run("total_requests", 3);
-  await insertMetric.run("approved_requests", 1);
-  await insertMetric.run("denied_requests", 1);
+  // seed analytics
+  await db.run(`INSERT INTO analytics (metric, value) VALUES ('total_requests',3)`);
+  await db.run(`INSERT INTO analytics (metric, value) VALUES ('approved_requests',1)`);
+  await db.run(`INSERT INTO analytics (metric, value) VALUES ('denied_requests',1)`);
 
   console.log("✅ Database reset and seeded.");
   await db.close();
-};
+}
 
-init();
+reset().catch((e) => {
+  console.error("❌ Reset failed:", e);
+  process.exit(1);
+});

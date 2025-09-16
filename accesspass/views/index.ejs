@@ -1,0 +1,23 @@
+<%- include('partials/header') %>
+<h1>Dashboard</h1>
+<section class="grid">
+  <div class="card"><p class="kpi-title">Pending</p><p class="kpi-value"><%= stats.pending %></p></div>
+  <div class="card"><p class="kpi-title">Approved</p><p class="kpi-value"><%= stats.approved %></p></div>
+  <div class="card"><p class="kpi-title">Denied</p><p class="kpi-value"><%= stats.denied %></p></div>
+  <div class="card"><p class="kpi-title">Revoked</p><p class="kpi-value"><%= stats.revoked %></p></div>
+</section>
+
+<h2>Recent</h2>
+<div class="table-wrap">
+<table class="table">
+  <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>System</th><th>Status</th><th>Created</th></tr></thead>
+  <tbody>
+    <% latest.forEach(r => { %>
+    <tr>
+      <td><%= r.id %></td><td><%= r.employee_name %></td><td><%= r.email %></td>
+      <td><%= r.system %></td><td><%= r.status %></td><td><%= r.created_at %></td>
+    </tr><% }) %>
+  </tbody>
+</table>
+</div>
+<%- include('partials/footer') %>

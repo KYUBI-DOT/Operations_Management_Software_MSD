@@ -1,0 +1,14 @@
+<%- include('../partials/header') %>
+<h1>Edit Request #<%= r.id %></h1>
+<form class="form" method="post" action="/requests/<%= r.id %>/decide?pass=<%= process.env.ADMIN_PASS %>">
+  <label><span>Status</span>
+    <select class="select" name="status">
+      <% ['pending','approved','denied','revoked'].forEach(s => { %>
+        <option value="<%= s %>" <%= r.status===s?'selected':'' %>><%= s %></option>
+      <% }) %>
+    </select>
+  </label>
+  <label><span>Decision Notes</span><textarea class="input" name="decision_notes"><%= r.decision_notes || '' %></textarea></label>
+  <button class="btn primary" type="submit">Save</button>
+</form>
+<%- include('../partials/footer') %>

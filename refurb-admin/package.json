@@ -5,9 +5,12 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js",
-    "start": "node server.js",
-    "db:reset": "node scripts/resetDb.js"
+  "dev": "nodemon server.js",
+  "start": "node server.js",
+  "db:reset": "node scripts/resetDb.js",
+  "db:migrate": "node scripts/migrate_add_resold_at.js"
+
+
   },
   "dependencies": {
     "dotenv": "^16.4.5",

@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import methodOverride from "method-override";
-
+import revenueRoutes from "./routes/revenue.js"
 import devicesRoutes from "./routes/devices.js";
 
 dotenv.config();
@@ -36,6 +36,8 @@ app.use((req, res, next) => {
 
 // routes
 app.use("/", devicesRoutes);
+app.use("/revenue",revenueRoutes);
+
 
 app.listen(PORT, () =>
   console.log(`🚀 Refurb Admin running at http://localhost:${PORT}`)

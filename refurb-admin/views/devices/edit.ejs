@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+
+<h1 class="page-title">Edit Device #<%= d.id %></h1>
+
+<form class="form" method="post" action="/devices/<%= d.id %>/status?pass=<%= process.env.ADMIN_PASS %>">
+  <label><span>Status</span>
+    <select class="select" name="status">
+      <% ['pending','in_progress','done','resold'].forEach(s => { %>
+        <option value="<%= s %>" <%= d.status===s?'selected':'' %>><%= s %></option>
+      <% }) %>
+    </select>
+  </label>
+  <button class="btn" type="submit">Update Status</button>
+</form>
+
+<form class="form" method="post" action="/devices/<%= d.id %>/grade?pass=<%= process.env.ADMIN_PASS %>">
+  <label><span>Grade</span>
+    <select class="select" name="grade">
+      <option value="">—</option>
+      <option value="A" <%= d.grade==='A'?'selected':'' %>>A</option>
+      <option value="B" <%= d.grade==='B'?'selected':'' %>>B</option>
+      <option value="C" <%= d.grade==='C'?'selected':'' %>>C</option>
+    </select>
+  </label>
+  <button class="btn" type="submit">Save Grade</button>
+</form>
+
+<form class="form" method="post" action="/devices/<%= d.id %>/resell?pass=<%= process.env.ADMIN_PASS %>">
+  <label><span>Price (if resold)</span><input class="input" type="number" name="price" step="0.01" value="<%= d.price ?? '' %>" /></label>
+  <button class="btn primary" type="submit">Resell</button>
+</form>
+
+<%- include('../partials/footer') %>

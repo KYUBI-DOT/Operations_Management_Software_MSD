@@ -1,0 +1,12 @@
+<%- include('../partials/header') %>
+
+<h1 class="page-title">New Device</h1>
+
+<form class="form" method="post" action="/devices?pass=<%= process.env.ADMIN_PASS %>">
+  <label><span>Serial</span><input class="input" name="serial" required /></label>
+  <label><span>Model</span><input class="input" name="model" required /></label>
+  <label><span>Notes</span><textarea class="input" name="notes"></textarea></label>
+  <button class="btn primary" type="submit">Create</button>
+</form>
+
+<%- include('../partials/footer') %>

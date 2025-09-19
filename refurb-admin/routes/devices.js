@@ -82,11 +82,16 @@ router.post("/devices/:id/grade", async (req, res) => {
 // Resell (set price and mark resold)
 router.post("/devices/:id/resell", async (req, res) => {
   if (!res.locals.isAuthed) return res.status(403).send("Auth required");
-  const { price } = req.body;
-  const p = price ? Number(price) : null;
-  await db.run(`UPDATE devices SET status='resold', price=? WHERE id=?`, [p, req.params.id]);
+  const p = req.body.price ? Number(req.body.price) : null;
+  await db.run(
+    `UPDATE devices
+     SET status='resold', price=?, resold_at=DATE('now')
+     WHERE id=?`,
+    [p, req.params.id]
+  );
   res.redirect(`/devices?status=resold&pass=${process.env.ADMIN_PASS}`);
 });
+
 
 // Delete
 router.post("/devices/:id/delete", async (req, res) => {

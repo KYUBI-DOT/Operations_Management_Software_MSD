@@ -1,0 +1,20 @@
+
+<h1>Analytics</h1>
+<div class="table-wrap" style="padding:10px">
+  <canvas id="chart" height="100"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  const labels =  JSON.stringify(chart.labels);
+  const approved = JSON.stringify(chart.approved);
+  const denied =  JSON.stringify(chart.denied) ;
+  new Chart(document.getElementById('chart'), {
+    type: 'line',
+    data: { labels, datasets: [
+      { label:'Approved', data: approved, borderWidth:2, tension:0.3, pointRadius:2 },
+      { label:'Denied', data: denied, borderWidth:2, tension:0.3, pointRadius:2 }
+    ]},
+    options: { responsive:true, plugins:{ tooltip:{ mode:'index', intersect:false }}, interaction:{ mode:'index', intersect:false } }
+  });
+</script>
+

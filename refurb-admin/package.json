@@ -5,20 +5,19 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-  "dev": "nodemon server.js",
-  "start": "node server.js",
-  "db:reset": "node scripts/resetDb.js",
-  "db:migrate": "node scripts/migrate_add_resold_at.js"
-
-
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "db:reset": "node scripts/resetDB.js",
+    "db:migrate": "node scripts/migrate_add_resold_at.js"
   },
   "dependencies": {
+    "better-sqlite3": "^11",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "method-override": "^3.0.0",
     "morgan": "^1.10.0",
-    "sqlite": "^5.1.6",
+    "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {

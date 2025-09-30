@@ -1,12 +1,4 @@
-/* =====================================================
-   Refurb Admin — LIGHT & VIBRANT THEME (Device Islands)
-   - Bright, airy surfaces with playful pastel accents
-   - "Island" device cards with soft elevation & glow
-   - Colorful buttons + badges
-   - Same class names (drop-in replacement)
-   ===================================================== */
 
-/* ---------- 1) Design tokens (LIGHT by default) ---------- */
 :root{
   /* Surfaces */
   --bg:        #f7f9ff;

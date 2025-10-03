@@ -6,6 +6,9 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import methodOverride from "method-override";
 import revenueRoutes from "./routes/revenue.js"
+import shopRoutes from "./routes/shop.js";
+
+
 import devicesRoutes from "./routes/devices.js";
 
 dotenv.config();
@@ -36,6 +39,7 @@ app.use((req, res, next) => {
 
 // routes
 app.use("/", devicesRoutes);
+app.use("/shop", shopRoutes);
 app.use("/revenue",revenueRoutes);
 
 

@@ -20,36 +20,46 @@ await db.exec(`
 
   CREATE TABLE devices (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    serial TEXT NOT NULL,
+    serial TEXT,
+    brand TEXT,
     model TEXT NOT NULL,
-    intake_date TEXT NOT NULL,
+    intake_date TEXT,
     status TEXT NOT NULL CHECK(status IN ('pending','in_progress','done','resold')),
     grade TEXT CHECK(grade IN ('A','B','C')),
     price REAL,
     notes TEXT
   );
+
   CREATE INDEX IF NOT EXISTS idx_devices_status ON devices(status);
   CREATE INDEX IF NOT EXISTS idx_devices_grade ON devices(grade);
 `);
 
 const today = new Date().toISOString().slice(0, 10);
 
-// seed
+// ✅ Seed sample devices
 await db.run(
-  `INSERT INTO devices (serial, model, intake_date, status, grade, price, notes)
-   VALUES ('SN-1001','iPhone 12','${today}','done','A',500,'Screen perfect')`
+  `INSERT INTO devices (serial, brand, model, intake_date, status, grade, price, notes)
+   VALUES ('SN-1001','Apple','iPhone 12','${today}','done','A',500,'Screen perfect')`
 );
+
 await db.run(
-  `INSERT INTO devices (serial, model, intake_date, status, grade, price, notes)
-   VALUES ('SN-1002','Galaxy S21','${today}','in_progress',NULL,NULL,'Wipe started')`
+  `INSERT INTO devices (serial, brand, model, intake_date, status, grade, price, notes)
+   VALUES ('SN-1002','Samsung','Galaxy S21','${today}','in_progress',NULL,NULL,'Wipe started')`
 );
+
 await db.run(
-  `INSERT INTO devices (serial, model, intake_date, status, grade, price, notes)
-   VALUES ('SN-1003','Dell XPS 13','${today}','pending',NULL,NULL,'Awaiting wipe')`
+  `INSERT INTO devices (serial, brand, model, intake_date, status, grade, price, notes)
+   VALUES ('SN-1003','Dell','XPS 13','${today}','pending',NULL,NULL,'Awaiting wipe')`
 );
+
 await db.run(
-  `INSERT INTO devices (serial, model, intake_date, status, grade, price, notes)
-   VALUES ('SN-1004','iPad Air','${today}','resold','B',320,'Minor scratches')`
+  `INSERT INTO devices (serial, brand, model, intake_date, status, grade, price, notes)
+   VALUES ('SN-1004','Apple','iPad Air','${today}','resold','B',320,'Minor scratches')`
+);
+
+await db.run(
+  `INSERT INTO devices (serial, brand, model, intake_date, status, grade, price, notes)
+   VALUES ('SN-1005','Apple','MacBook Pro','${today}','done','A',1500,'Like new')`
 );
 
 console.log("✅ Database reset and seeded.");

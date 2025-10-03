@@ -30,6 +30,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
 
+
+// landing → client shop
+app.get("/", (req, res) => res.redirect("/shop"));
+
+
 // simple demo auth (URL param ?pass=...)
 app.use((req, res, next) => {
   res.locals.isAuthed =
@@ -38,9 +43,10 @@ app.use((req, res, next) => {
 });
 
 // routes
-app.use("/", devicesRoutes);
 app.use("/shop", shopRoutes);
-app.use("/revenue",revenueRoutes);
+app.use("/revenue", revenueRoutes);
+app.use("/devices", devicesRoutes);  
+
 
 
 app.listen(PORT, () =>

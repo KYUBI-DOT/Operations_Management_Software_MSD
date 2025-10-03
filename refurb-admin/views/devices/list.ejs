@@ -29,44 +29,51 @@
       <td><%= r.grade || '–' %></td>
       <td><%= r.price != null ? ('$' + r.price) : '–' %></td>
       <td class="row-actions">
-        <a href="/devices/<%= r.id %>/edit?pass=<%= process.env.ADMIN_PASS %>">Edit</a>
+  <!-- Edit is allowed for non-resold only -->
+  <% if (r.status !== 'resold') { %>
+    <a href="/devices/<%= r.id %>/edit?pass=<%= process.env.ADMIN_PASS %>">Edit</a>
+  <% } %>
 
-        <% if (r.status !== 'in_progress') { %>
-          <form method="post" action="/devices/<%= r.id %>/status?pass=<%= process.env.ADMIN_PASS %>" style="display:inline">
-            <input type="hidden" name="status" value="in_progress" />
-            <button class="btn" type="submit">Start Wipe</button>
-          </form>
-        <% } %>
+  <!-- Start Wipe only when pending -->
+  <% if (r.status === 'pending') { %>
+    <form method="post" action="/devices/<%= r.id %>/status?pass=<%= process.env.ADMIN_PASS %>" style="display:inline">
+      <input type="hidden" name="status" value="in_progress" />
+      <button class="btn" type="submit">Start Wipe</button>
+    </form>
+  <% } %>
 
-        <% if (r.status !== 'done') { %>
-          <form method="post" action="/devices/<%= r.id %>/status?pass=<%= process.env.ADMIN_PASS %>" style="display:inline">
-            <input type="hidden" name="status" value="done" />
-            <button class="btn" type="submit">Mark Done</button>
-          </form>
-        <% } %>
+  <!-- Mark Done only when in_progress -->
+  <% if (r.status === 'in_progress') { %>
+    <form method="post" action="/devices/<%= r.id %>/status?pass=<%= process.env.ADMIN_PASS %>" style="display:inline">
+      <input type="hidden" name="status" value="done" />
+      <button class="btn" type="submit">Mark Done</button>
+    </form>
+  <% } %>
 
-        <% if (r.status === 'done') { %>
-          <form method="post" action="/devices/<%= r.id %>/grade?pass=<%= process.env.ADMIN_PASS %>" style="display:inline">
-            <select class="select" name="grade">
-              <option value="A" <%= r.grade==='A'?'selected':'' %>>A</option>
-              <option value="B" <%= r.grade==='B'?'selected':'' %>>B</option>
-              <option value="C" <%= r.grade==='C'?'selected':'' %>>C</option>
-            </select>
-            <button class="btn" type="submit">Set Grade</button>
-          </form>
-          <form method="post" action="/devices/<%= r.id %>/resell?pass=<%= process.env.ADMIN_PASS %>" style="display:inline">
-            <input class="input" type="number" name="price" step="0.01" placeholder="Price" />
-            <button class="btn primary" type="submit">Resell</button>
-          </form>
-        <% } %>
+  <!-- Grade + Resell only when done -->
+  <% if (r.status === 'done') { %>
+    <form method="post" action="/devices/<%= r.id %>/grade?pass=<%= process.env.ADMIN_PASS %>" style="display:inline">
+      <select class="select" name="grade">
+        <option value="A" <%= r.grade==='A'?'selected':'' %>>A</option>
+        <option value="B" <%= r.grade==='B'?'selected':'' %>>B</option>
+        <option value="C" <%= r.grade==='C'?'selected':'' %>>C</option>
+      </select>
+      <button class="btn" type="submit">Set Grade</button>
+    </form>
+    <form method="post" action="/devices/<%= r.id %>/resell?pass=<%= process.env.ADMIN_PASS %>" style="display:inline">
+      <input class="input" type="number" name="price" step="0.01" placeholder="Price" />
+      <button class="btn primary" type="submit">Resell</button>
+    </form>
+  <% } %>
 
-        <form method="post" action="/devices/<%= r.id %>/delete?pass=<%= process.env.ADMIN_PASS %>" style="display:inline" onsubmit="return confirm('Delete device?')">
-          <button class="btn ghost" type="submit">Delete</button>
-        </form>
-      </td>
-    </tr>
-  <% }) %>
-  </tbody>
+  <!-- Delete always visible; this is the ONLY action for resold -->
+  <form method="post" action="/devices/<%= r.id %>/delete?pass=<%= process.env.ADMIN_PASS %>" style="display:inline" onsubmit="return confirm('Delete device?')">
+    <button class="btn ghost" type="submit">Delete</button>
+  </form>
+</td>
+</tr>
+<% }) %>
+</tbody>
 </table>
 </div>
 

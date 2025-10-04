@@ -1,7 +1,5 @@
-<%- include('../partials/header', { active: 'revenue' }) %>
 <%- include('../partials/head',   { title: 'Revenue', active: 'revenue' }) %>
 <%- include('../partials/header', { active: 'revenue' }) %>
-
 
 <h1 class="page-title">Revenue</h1>
 <p class="subtle">Sales performance for resold devices.</p>
@@ -64,10 +62,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-  // Line chart
-  const labels = <%- JSON.stringify(chart.labels) %>;
+  const labels  = <%- JSON.stringify(chart.labels) %>;
   const revenue = <%- JSON.stringify(chart.revenue) %>;
-  const units = <%- JSON.stringify(chart.units) %>;
+  const units   = <%- JSON.stringify(chart.units) %>;
 
   const ctx1 = document.getElementById('revLine').getContext('2d');
   new Chart(ctx1, {
@@ -76,7 +73,7 @@
       labels,
       datasets: [
         { label: 'Revenue', data: revenue, borderWidth: 2, tension: 0.35, pointRadius: 2 },
-        { label: 'Units', data: units, yAxisID: 'y2', borderWidth: 2, tension: 0.35, pointRadius: 2 }
+        { label: 'Units',    data: units,   yAxisID: 'y2', borderWidth: 2, tension: 0.35, pointRadius: 2 }
       ]
     },
     options: {
@@ -90,9 +87,8 @@
     }
   });
 
-  // Pie chart
   const gradeLabels = <%- JSON.stringify(grade.labels) %>;
-  const gradeData = <%- JSON.stringify(grade.data) %>;
+  const gradeData   = <%- JSON.stringify(grade.data) %>;
   const ctx2 = document.getElementById('gradePie').getContext('2d');
   new Chart(ctx2, {
     type: 'pie',
@@ -102,6 +98,4 @@
 </script>
 
 <%- include('../partials/footer') %>
-<%- include('../partials/footer') %>
 <%- include('../partials/end') %>
-

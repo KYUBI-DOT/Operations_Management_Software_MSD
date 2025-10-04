@@ -85,8 +85,8 @@ app.use("/shop", shopRoutes);
 app.get("/partner", (req, res) => {
   res.render("home/partner", {
     title: "Partner With Us",
-    active: "home",
-    sent: req.query.sent === "1", // we'll show a success banner next step
+    active: "partner",
+    sent: req.query.sent === "1", 
   });
 });
 

@@ -16,7 +16,7 @@ body {
   line-height: 1.6;
 }
 
-/* Header */
+/* ---------------- Header ---------------- */
 .home-header {
   position: sticky; top: 0; z-index: 10;
   display: flex; justify-content: space-between; align-items: center;
@@ -25,13 +25,55 @@ body {
   border-bottom: 1px solid #eee;
 }
 .logo { font-weight: 700; font-size: 18px; }
+
 .nav a {
-  margin-left: 16px; text-decoration: none; color: var(--text); font-weight: 500;
+  position: relative;
+  margin-left: 16px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 500;
 }
 .nav a:hover { color: var(--primary); }
+.nav a.active {
+  color: var(--primary);
+  font-weight: 700;
+}
+.nav a.active::after {
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-6px;
+  height:3px; border-radius:3px;
+  background: var(--primary);
+  opacity:.28;
+}
 
+/* right-side actions in public header */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-admin {
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  box-shadow: var(--shadow);
+  border: 1px solid transparent;
+}
+.btn-admin:hover { background: var(--primary-600); }
+.btn-admin.btn-outline {
+  background: #fff;
+  color: var(--primary);
+  border: 1px solid #cbd5e1;
+  box-shadow: none;
+}
+.btn-admin.btn-outline:hover { background: #f8fafc; }
 
-/* --- extra helpers for the expanded home page --- */
+/* ---------- extra helpers for the expanded home page ---------- */
 .pill {
   display:inline-block; margin:4px; padding:6px 10px;
   border-radius:999px; font-size:12px; background:#eef2ff; color:#1d4ed8;
@@ -74,8 +116,7 @@ details {
 details summary { cursor:pointer; font-weight:600; }
 details p { margin:8px 0 0; }
 
-
-/* Hero */
+/* ---------------- Hero ---------------- */
 .hero {
   text-align: center;
   padding: 80px 20px;
@@ -91,7 +132,7 @@ details p { margin:8px 0 0; }
 }
 .cta:hover { background: var(--primary-600); }
 
-/* Features */
+/* ---------------- Features ---------------- */
 .features { padding: 60px 20px; text-align: center; }
 .features h2 { font-size: 28px; margin: 0 0 26px; }
 
@@ -110,36 +151,86 @@ details p { margin:8px 0 0; }
 .card h3 { margin: 0 0 6px; font-size: 18px; }
 .card p { margin: 0; color: var(--muted); font-size: 14px; }
 
-/* Footer */
+/* ---------------- Footer ---------------- */
 .footer {
   text-align: center; padding: 20px; font-size: 14px;
   color: #777; background: #fafafa; border-top: 1px solid #eee;
 }
 
-/* right-side actions in public header */
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* ---------------- Forms (Partner page) ---------------- */
+.cards .card h3 { margin: 0 0 6px; }
+
+.cards .card label {
+  display: block;
+  color: #51607a;
+  font-size: 13px;
+  margin: 0 0 10px;
 }
 
-.btn-admin {
-  display: inline-block;
-  text-decoration: none;
-  font-weight: 700;
-  padding: 8px 14px;
-  border-radius: 10px;
-  background: var(--primary);
-  color: #fff;
-  box-shadow: var(--shadow);
-  border: 1px solid transparent;
+/* Make text inputs, selects and textareas full-width under the label */
+.cards .card label > input:not([type="checkbox"]),
+.cards .card label > textarea,
+.cards .card label > select {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
 }
-.btn-admin:hover { background: var(--primary-600); }
 
-.btn-admin.btn-outline {
+/* Base controls */
+.input,
+.select,
+.cards .card label > input:not([type="checkbox"]),
+.cards .card label > textarea,
+.cards .card label > select {
   background: #fff;
-  color: var(--primary);
-  border: 1px solid #cbd5e1;
-  box-shadow: none;
+  color: #0c1631;
+  border: 1px solid #e5eaf4;
+  border-radius: 12px;
+  padding: 10px 12px;
+  line-height: 1.4;
+  box-shadow: 0 2px 6px rgba(12, 22, 49, .04);
+  transition: border-color 140ms ease, box-shadow 140ms ease;
 }
-.btn-admin.btn-outline:hover { background: #f8fafc; }
+
+/* Focus state (nice ring) */
+.input:focus,
+.select:focus,
+.cards .card label > input:not([type="checkbox"]):focus,
+.cards .card label > textarea:focus,
+.cards .card label > select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow:
+    0 2px 6px rgba(12, 22, 49, .06),
+    0 0 0 3px rgba(59, 130, 246, .20);
+}
+
+/* Placeholder */
+::placeholder { color: #9aa7bd; }
+
+/* Textarea sizing */
+.cards .card label > textarea { min-height: 110px; resize: vertical; }
+
+/* Select: subtle custom arrow (keeps native) */
+.cards .card label > select,
+.select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #6b7a92 50%),
+    linear-gradient(135deg, #6b7a92 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 52%,
+    calc(100% - 12px) 52%;
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 34px;
+}
+
+/* Checkboxes stay inline and spaced */
+.cards .card label input[type="checkbox"] {
+  margin-right: 8px;
+  transform: translateY(1px);
+}
+
+/* Tighten the three-column group headers */
+.cards .card .muted { margin-top: -2px; }

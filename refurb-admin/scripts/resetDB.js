@@ -18,17 +18,19 @@ await db.exec(`
 
   DROP TABLE IF EXISTS devices;
 
-  CREATE TABLE devices (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    serial TEXT,
-    brand TEXT,
-    model TEXT NOT NULL,
-    intake_date TEXT,
-    status TEXT NOT NULL CHECK(status IN ('pending','in_progress','done','resold')),
-    grade TEXT CHECK(grade IN ('A','B','C')),
-    price REAL,
-    notes TEXT
-  );
+ CREATE TABLE devices (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  serial TEXT NOT NULL,
+  brand TEXT,
+  model TEXT NOT NULL,
+  intake_date TEXT NOT NULL,
+  status TEXT NOT NULL CHECK(status IN ('pending','in_progress','done','resold')),
+  grade TEXT CHECK(grade IN ('A','B','C')),
+  price REAL,
+  notes TEXT,
+  resold_at TEXT   -- NEW COLUMN
+);
+
 
   CREATE INDEX IF NOT EXISTS idx_devices_status ON devices(status);
   CREATE INDEX IF NOT EXISTS idx_devices_grade ON devices(grade);

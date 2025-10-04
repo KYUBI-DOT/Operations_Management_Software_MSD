@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title><%= title %></title>
+
+  <!-- Public CSS -->
+  <link rel="stylesheet" href="/home.css?v=<%= cacheBuster %>">
+</head>
+<body>
+  <header class="home-header">
+    <div class="logo">♻️ Refurb Admin</div>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/shop">Shop</a>
+    </nav>
+  </header>
+
+  <main class="hero">
+    <h1>Asset Lifecycle Management</h1>
+    <p>We securely wipe, refurbish, and resell devices from schools, banks, and enterprises.</p>
+    <a class="cta" href="/shop">Browse Devices</a>
+  </main>
+
+  <section class="features">
+    <h2>What We Do</h2>
+    <div class="cards">
+      <div class="card">
+        <img src="/images/iphone.jpg" alt="iPhone"/>
+        <h3>Phones</h3>
+        <p>Certified pre-owned phones with data securely erased.</p>
+      </div>
+      <div class="card">
+        <img src="/images/monitor.jpg" alt="Monitor"/>
+        <h3>Monitors</h3>
+        <p>High-quality refurbished monitors, tested and cleaned.</p>
+      </div>
+      <div class="card">
+        <img src="/images/laptop1.jpg" alt="Laptop"/>
+        <h3>Laptops</h3>
+        <p>Enterprise laptops refurbished for extended lifecycle.</p>
+      </div>
+      <div class="card">
+        <img src="/images/laptop2.jpg" alt="Laptop"/>
+        <h3>Ultrabooks</h3>
+        <p>Sleek ultrabooks with reliable performance.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© <%= new Date().getFullYear() %> Refurb Admin. All rights reserved.</p>
+  </footer>
+</body>
+</html>

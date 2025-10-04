@@ -1,4 +1,5 @@
-<%- include('../partials/header') %>
+<%- include('../partials/head',   { title: 'Revenue' }) %>
+<%- include('../partials/header', { active: 'revenue' }) %>
 
 <h1 class="page-title">Revenue</h1>
 <p class="subtle">Sales performance for resold devices.</p>
@@ -6,24 +7,24 @@
 <section class="grid" style="margin-top:18px;">
   <div class="card">
     <p class="kpi-title">Total Devices Sold</p>
-    <p class="kpi-value"><%= kpi.soldCount %></p>
+    <p class="kpi-value"><%= (kpi && kpi.soldCount) || 0 %></p>
     <div class="kpi-chip">Count of resold items</div>
   </div>
   <div class="card">
     <p class="kpi-title">Total Revenue</p>
-    <p class="kpi-value">$<%= kpi.totalRevenue.toFixed(2) %></p>
+    <p class="kpi-value">$<%= (kpi && typeof kpi.totalRevenue === 'number') ? kpi.totalRevenue.toFixed(2) : '0.00' %></p>
     <div class="kpi-chip">Sum of sale prices</div>
   </div>
   <div class="card">
     <p class="kpi-title">Average Price</p>
-    <p class="kpi-value">$<%= kpi.avgPrice.toFixed(2) %></p>
+    <p class="kpi-value">$<%= (kpi && typeof kpi.avgPrice === 'number') ? kpi.avgPrice.toFixed(2) : '0.00' %></p>
     <div class="kpi-chip">Per resold device</div>
   </div>
   <div class="card">
     <p class="kpi-title">Best Month</p>
-    <p class="kpi-value"><%= kpi.bestMonth ? kpi.bestMonth.ym : '—' %></p>
+    <p class="kpi-value"><%= (kpi && kpi.bestMonth && kpi.bestMonth.ym) || '—' %></p>
     <div class="kpi-chip">
-      <%= kpi.bestMonth ? ('$' + Number(kpi.bestMonth.revenue).toFixed(2)) : 'No data' %>
+      <%= (kpi && kpi.bestMonth) ? ('$' + Number(kpi.bestMonth.revenue).toFixed(2)) : 'No data' %>
     </div>
   </div>
 </section>
@@ -39,21 +40,23 @@
 </div>
 
 <h3 style="margin:22px 0 10px">Monthly Breakdown</h3>
-<div class="table-wrap">
+<div class="table-wrap card">
   <table class="table">
     <thead>
       <tr><th>Month</th><th>Units Sold</th><th>Revenue</th></tr>
     </thead>
     <tbody>
-      <% if (chart.labels.length === 0) { %>
+      <% const _labels=(chart&&chart.labels)||[], _units=(chart&&chart.units)||[], _rev=(chart&&chart.revenue)||[]; %>
+      <% if (_labels.length === 0) { %>
         <tr><td colspan="3" class="subtle">No sales yet.</td></tr>
-      <% } %>
-      <% for (let i = 0; i < chart.labels.length; i++) { %>
-        <tr>
-          <td><%= chart.labels[i] %></td>
-          <td><%= chart.units[i] %></td>
-          <td>$<%= Number(chart.revenue[i]).toFixed(2) %></td>
-        </tr>
+      <% } else { %>
+        <% for (let i = 0; i < _labels.length; i++) { %>
+          <tr>
+            <td><%= _labels[i] %></td>
+            <td><%= _units[i] ?? 0 %></td>
+            <td>$<%= typeof _rev[i] === 'number' ? Number(_rev[i]).toFixed(2) : '0.00' %></td>
+          </tr>
+        <% } %>
       <% } %>
     </tbody>
   </table>
@@ -61,35 +64,32 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-  // Line chart
-  const labels = <%- JSON.stringify(chart.labels) %>;
-  const revenue = <%- JSON.stringify(chart.revenue) %>;
-  const units = <%- JSON.stringify(chart.units) %>;
+  const labels = <%- JSON.stringify((chart && chart.labels) || []) %>;
+  const revenue = <%- JSON.stringify((chart && chart.revenue) || []) %>;
+  const units = <%- JSON.stringify((chart && chart.units) || []) %>;
 
-  const ctx1 = document.getElementById('revLine').getContext('2d');
-  new Chart(ctx1, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
+  if (labels.length) {
+    const ctx1 = document.getElementById('revLine').getContext('2d');
+    new Chart(ctx1, {
+      type: 'line',
+      data: { labels, datasets: [
         { label: 'Revenue', data: revenue, borderWidth: 2, tension: 0.35, pointRadius: 2 },
         { label: 'Units', data: units, yAxisID: 'y2', borderWidth: 2, tension: 0.35, pointRadius: 2 }
-      ]
-    },
-    options: {
-      responsive: true,
-      interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { position: 'bottom' } },
-      scales: {
-        y:  { beginAtZero: true },
-        y2: { beginAtZero: true, position: 'right', grid: { display: false } }
+      ]},
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { position: 'bottom' } },
+        scales: {
+          y:  { beginAtZero: true },
+          y2: { beginAtZero: true, position: 'right', grid: { display: false } }
+        }
       }
-    }
-  });
+    });
+  }
 
-  // Pie chart
-  const gradeLabels = <%- JSON.stringify(grade.labels) %>;
-  const gradeData = <%- JSON.stringify(grade.data) %>;
+  const gradeLabels = <%- JSON.stringify((grade && grade.labels) || ['A','B','C']) %>;
+  const gradeData = <%- JSON.stringify((grade && grade.data) || [0,0,0]) %>;
   const ctx2 = document.getElementById('gradePie').getContext('2d');
   new Chart(ctx2, {
     type: 'pie',
@@ -99,3 +99,4 @@
 </script>
 
 <%- include('../partials/footer') %>
+<%- include('../partials/end') %>

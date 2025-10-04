@@ -1,32 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Shop Devices</title>
-  <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-  <%- include("../partials/header") %>
+<%- include('../partials/head',   { title: (typeof title !== 'undefined' ? title : 'Shop') }) %>
+<%- include('../partials/header', { active: (typeof active !== 'undefined' ? active : 'shop') }) %>
 
-  <main class="container">
-    <h1>💻 Devices Available for Purchase</h1>
+<h1>💻 Devices Available for Purchase</h1>
+<p class="subtle">Certified devices ready for sale. Grades reflect cosmetic/functional quality.</p>
 
-    <% if (devices.length === 0) { %>
-      <p>No devices available at the moment. Please check back later.</p>
-    <% } else { %>
-      <div class="grid">
-        <% devices.forEach(d => { %>
-          <div class="card">
-            <h2><%= d.brand %> <%= d.model %></h2>
-            <p><strong>Grade:</strong> <%= d.grade %></p>
-            <p><strong>Price:</strong> $<%= d.price || 'TBA' %></p>
-            <a href="#" class="btn">Buy Now</a>
-          </div>
-        <% }) %>
+<% const _items = Array.isArray(items) ? items : []; %>
+
+<% if (_items.length === 0) { %>
+  <div class="card" style="margin-top:1rem;">
+    <p class="muted">No devices are available right now. Please check back later.</p>
+  </div>
+<% } else { %>
+  <div class="grid" style="margin-top:1rem;">
+    <% _items.forEach(it => { %>
+      <div class="card">
+        <h3><%= (it.brand ? it.brand + ' ' : '') + it.model %></h3>
+        <p class="muted">Grade: <strong><%= it.grade %></strong></p>
+        <p class="price"><%= it.price != null ? ('$' + it.price) : '—' %></p>
+
+        <!-- Placeholder add-to-cart (wire up later if needed) -->
+        <form method="post" action="/shop/add-to-cart">
+          <input type="hidden" name="id" value="<%= it.id %>"/>
+          <button class="btn primary" type="submit">Add to cart</button>
+        </form>
       </div>
-    <% } %>
-  </main>
+    <% }) %>
+  </div>
+<% } %>
 
-  <%- include("../partials/footer") %>
-</body>
-</html>
+<%- include('../partials/footer') %>
+<%- include('../partials/end') %>

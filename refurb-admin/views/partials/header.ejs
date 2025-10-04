@@ -1,22 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Refurb Admin</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/style.css" />
-</head>
-<body>
-<nav class="nav">
-  <div class="brand">📱 Refurb Admin</div>
-  <a href="/?pass=<%= process.env.ADMIN_PASS %>">Dashboard</a>
-  <a href="/devices?pass=<%= process.env.ADMIN_PASS %>">All Devices</a>
-  <a href="/devices?status=pending&pass=<%= process.env.ADMIN_PASS %>">Pending</a>
-  <a href="/devices?status=in_progress&pass=<%= process.env.ADMIN_PASS %>">In Progress</a>
-  <a href="/devices?status=done&pass=<%= process.env.ADMIN_PASS %>">Done</a>
-  <a href="/devices?status=resold&pass=<%= process.env.ADMIN_PASS %>">Resold</a>
-  <a class="cta" href="/devices/new?pass=<%= process.env.ADMIN_PASS %>">+ New</a>
-  <a href="/revenue?pass=<%= process.env.ADMIN_PASS %>">Revenue</a>
+<%
+  const _active  = (typeof active  !== 'undefined' && active)  ? active  : '';
+  const _adminQS = (typeof adminQS !== 'undefined' && adminQS) ? adminQS : '';
+  const qsJoin   = _adminQS ? ('&' + _adminQS.slice(1)) : '';
+%>
 
-</nav>
-<div class="container">
+<header class="topbar">
+  <div class="topbar-inner">
+    <!-- LEFT SIDE -->
+    <div class="left-wrap">
+      <a class="brand" href="/dashboard<%= _adminQS %>">
+        <span class="logo">🧰</span> Refurb Admin
+      </a>
+
+      <nav class="nav-left">
+        <a class="<%= _active==='dashboard' ? 'active' : '' %>"
+           href="/dashboard<%= _adminQS %>">Dashboard</a>
+
+        <a class="<%= _active==='all' ? 'active' : '' %>"
+           href="/devices<%= _adminQS %>">All Devices</a>
+
+        <a class="<%= _active==='pending' ? 'active' : '' %>"
+           href="/devices?status=pending<%= qsJoin %>">Pending</a>
+
+        <a class="<%= _active==='inprogress' ? 'active' : '' %>"
+           href="/devices?status=in_progress<%= qsJoin %>">In Progress</a>
+
+        <a class="<%= _active==='done' ? 'active' : '' %>"
+           href="/devices?status=done<%= qsJoin %>">Done</a>
+
+        <a class="<%= _active==='resold' ? 'active' : '' %>"
+           href="/devices?status=resold<%= qsJoin %>">Resold</a>
+
+        <a class="<%= _active==='shop' ? 'active' : '' %>"
+           href="/shop">Shop</a>
+      </nav>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="nav-right">
+      <span class="topbar-sep" aria-hidden="true"></span>
+
+      <a class="btn btn-primary <%= _active==='new' ? 'active' : '' %>"
+         href="/devices/new<%= _adminQS %>">+ New</a>
+
+      <a class="btn ghost <%= _active==='revenue' ? 'active' : '' %>"
+         href="/revenue<%= _adminQS %>">Revenue</a>
+    </div>
+  </div>
+</header>

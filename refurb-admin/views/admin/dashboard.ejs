@@ -1,33 +1,59 @@
-<%- include('../partials/header') %>
+<%- include('../partials/head',   { title: 'Admin Dashboard' }) %>
+<%- include('../partials/header', { active: 'dashboard' }) %>
 
 <h1 class="page-title">Admin Dashboard</h1>
 <p class="subtle">Device intake, secure wipe progress, grading and resale.</p>
 
 <section class="grid" style="margin-top:18px;">
-  <div class="card"><p class="kpi-title">Pending</p><p class="kpi-value"><%= stats.pending %></p></div>
-  <div class="card"><p class="kpi-title">In Progress</p><p class="kpi-value"><%= stats.in_progress %></p></div>
-  <div class="card"><p class="kpi-title">Data Deleted</p><p class="kpi-value"><%= stats.done %></p></div>
-  <div class="card"><p class="kpi-title">Resold</p><p class="kpi-value"><%= stats.resold %></p></div>
+  <div class="card">
+    <p class="kpi-title">Pending</p>
+    <p class="kpi-value"><%= (stats && stats.pending) || 0 %></p>
+  </div>
+  <div class="card">
+    <p class="kpi-title">In Progress</p>
+    <p class="kpi-value"><%= (stats && stats.in_progress) || 0 %></p>
+  </div>
+  <div class="card">
+    <p class="kpi-title">Data Deleted</p>
+    <p class="kpi-value"><%= (stats && stats.done) || 0 %></p>
+  </div>
+  <div class="card">
+    <p class="kpi-title">Resold</p>
+    <p class="kpi-value"><%= (stats && stats.resold) || 0 %></p>
+  </div>
 </section>
 
 <h2 style="margin:22px 0 10px">Recent Activity</h2>
-<div class="table-wrap">
+
+<div class="table-wrap card">
   <table class="table">
-    <thead><tr><th>ID</th><th>Serial</th><th>Model</th><th>Status</th><th>Grade</th><th>Price</th><th>Date</th></tr></thead>
-    <tbody>
-    <% (latest || []).forEach(r => { %>
+    <thead>
       <tr>
-        <td><%= r.id %></td>
-        <td><%= r.serial %></td>
-        <td><%= r.model %></td>
-        <td><span class="badge <%= r.status %>"><%= r.status %></span></td>
-        <td><%= r.grade || '–' %></td>
-        <td><%= r.price != null ? ('$' + r.price) : '–' %></td>
-        <td><%= r.intake_date %></td>
+        <th>ID</th><th>Serial</th><th>Model</th>
+        <th>Status</th><th>Grade</th><th>Price</th><th>Date</th>
       </tr>
-    <% }) %>
+    </thead>
+    <tbody>
+      <% if ((latest || []).length === 0) { %>
+        <tr>
+          <td colspan="7" class="muted">No recent activity yet.</td>
+        </tr>
+      <% } else { %>
+        <% (latest || []).forEach(r => { %>
+          <tr>
+            <td><%= r.id %></td>
+            <td><%= r.serial %></td>
+            <td><%= r.model %></td>
+            <td><span class="badge <%= r.status %>"><%= r.status %></span></td>
+            <td><%= r.grade || '–' %></td>
+            <td><%= r.price != null ? ('$' + r.price) : '–' %></td>
+            <td><%= r.intake_date || r.updated_at || '—' %></td>
+          </tr>
+        <% }) %>
+      <% } %>
     </tbody>
   </table>
 </div>
 
 <%- include('../partials/footer') %>
+<%- include('../partials/end') %>

@@ -1,21 +1,17 @@
-<%- include('../partials/head',   { title: 'New Device' }) %>
 <%- include('../partials/header', { active: 'new' }) %>
 
 <h1 class="page-title">New Device</h1>
 
-<form class="form" method="post" action="/devices<%= adminQS || '' %>">
-  <label>
-    <span>Serial</span>
+<form class="form" method="post" action="/devices">
+  <label><span>Serial</span>
     <input class="input" name="serial" required />
   </label>
 
-  <label>
-    <span>Model</span>
+  <label><span>Model</span>
     <input class="input" name="model" required />
   </label>
 
-  <label>
-    <span>Notes</span>
+  <label><span>Notes</span>
     <textarea class="input" name="notes"></textarea>
   </label>
 
@@ -23,4 +19,3 @@
 </form>
 
 <%- include('../partials/footer') %>
-<%- include('../partials/end') %>

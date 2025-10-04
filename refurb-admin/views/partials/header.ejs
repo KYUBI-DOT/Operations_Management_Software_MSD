@@ -1,42 +1,38 @@
 <%
   const _active = (typeof active !== 'undefined' && active) ? active : '';
-  const brandHref = isAuthed ? '/dashboard' : '/';
 %>
 
 <header class="topbar">
   <div class="topbar-inner">
     <!-- LEFT -->
     <div class="left-wrap">
-      <a class="brand" href="<%= brandHref %>">
+      <a class="brand" href="/dashboard">
         <span class="logo">🧰</span> Refurb Admin
       </a>
 
       <nav class="nav-left">
-        <% if (isAuthed) { %>
-          <a class="<%= _active==='dashboard' ? 'active' : '' %>" href="/dashboard">Dashboard</a>
-          <a class="<%= _active==='all' ? 'active' : '' %>" href="/devices">All Devices</a>
-          <a class="<%= _active==='pending' ? 'active' : '' %>" href="/devices?status=pending">Pending</a>
-          <a class="<%= _active==='inprogress' ? 'active' : '' %>" href="/devices?status=in_progress">In Progress</a>
-          <a class="<%= _active==='done' ? 'active' : '' %>" href="/devices?status=done">Done</a>
-          <a class="<%= _active==='resold' ? 'active' : '' %>" href="/devices?status=resold">Resold</a>
-          <a class="<%= _active==='shop' ? 'active' : '' %>" href="/shop">Shop</a>
-        <% } else { %>
-          <a class="<%= _active==='home' ? 'active' : '' %>" href="/">Home</a>
-          <a class="<%= _active==='shop' ? 'active' : '' %>" href="/shop">Shop</a>
-        <% } %>
+        <a class="<%= _active==='dashboard' ? 'active' : '' %>" href="/dashboard">Dashboard</a>
+        <a class="<%= _active==='all' ? 'active' : '' %>" href="/devices">All Devices</a>
+        <a class="<%= _active==='pending' ? 'active' : '' %>" href="/devices?status=pending">Pending</a>
+        <a class="<%= _active==='inprogress' ? 'active' : '' %>" href="/devices?status=in_progress">In Progress</a>
+        <a class="<%= _active==='done' ? 'active' : '' %>" href="/devices?status=done">Done</a>
+        <a class="<%= _active==='resold' ? 'active' : '' %>" href="/devices?status=resold">Resold</a>
+        <a class="<%= _active==='shop' ? 'active' : '' %>" href="/shop">Shop</a>
       </nav>
     </div>
 
     <!-- RIGHT -->
     <div class="nav-right">
-      <% if (isAuthed) { %>
-        <a class="btn primary <%= _active==='new' ? 'active' : '' %>" href="/devices/new">+ New</a>
-        <a class="btn ghost <%= _active==='revenue' ? 'active' : '' %>" href="/revenue">Revenue</a>
+      <a class="btn btn-primary <%= _active==='new' ? 'active' : '' %>" href="/devices/new">+ New</a>
+      <a class="btn ghost <%= _active==='revenue' ? 'active' : '' %>" href="/revenue">Revenue</a>
+
+      <span class="topbar-sep" aria-hidden="true"></span>
+
+      <% if (user) { %>
+        <span class="badge" title="Signed in"><%= user.name %></span>
         <form method="post" action="/logout" style="display:inline">
-          <button class="btn ghost" type="submit">Logout</button>
+          <button class="btn" type="submit">Logout</button>
         </form>
-      <% } else { %>
-        <a class="btn ghost" href="/login">Login</a>
       <% } %>
     </div>
   </div>

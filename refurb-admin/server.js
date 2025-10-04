@@ -6,6 +6,7 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import methodOverride from "method-override";
 import session from "express-session";
+import bcrypt from "bcrypt";
 
 import db from "./db.js";
 import revenueRoutes from "./routes/revenue.js";
@@ -19,86 +20,121 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProd = process.env.NODE_ENV === "production";
 
-// Views + static
+// -------------------------------
+// Views + Static
+// -------------------------------
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-app.use(express.static(path.join(__dirname, "public"))); // /style.css, /home.css, /images/*
+app.use(express.static(path.join(__dirname, "public")));
 
+// -------------------------------
 // Middleware
+// -------------------------------
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
 
-// Sessions (real auth)
 app.use(
   session({
-    name: "refurb.sid",
-    secret: process.env.SESSION_SECRET || "dev-secret",
+    secret: process.env.SESSION_SECRET || "dev-secret-change-me",
     resave: false,
     saveUninitialized: false,
-    cookie: { httpOnly: true, sameSite: "lax", maxAge: 1000 * 60 * 60 * 8 }, // 8h
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: isProd, // set true when behind HTTPS
+      maxAge: 1000 * 60 * 60 * 8, // 8 hours
+    },
   })
 );
 
-// Globals for views
+// expose helpers to EJS
 app.use((req, res, next) => {
   res.locals.cacheBuster = Date.now();
-  res.locals.isAuthed = Boolean(req.session?.isAuthed);
-  res.locals.user = req.session?.user || null;
+  res.locals.isAuthed = !!req.session.user;
+  res.locals.user = req.session.user || null;
+  // legacy helper (no longer used for auth, but keeps existing templates intact)
+  res.locals.adminQS = "";
   next();
 });
 
-// Helper: guard admin routes
+// -------------------------------
+// Auth helpers
+// -------------------------------
 function requireAuth(req, res, next) {
-  if (!req.session?.isAuthed) return res.redirect("/login");
+  if (!req.session.user) {
+    const nextUrl = encodeURIComponent(req.originalUrl || "/dashboard");
+    return res.redirect(`/login?next=${nextUrl}`);
+  }
   next();
 }
 
+// -------------------------------
 // Public pages
-app.get("/", (req, res) => {
-  res.render("home/index", { title: "Welcome", active: "home" });
-});
-app.use("/shop", shopRoutes); // public
+// -------------------------------
+app.get("/", (_req, res) =>
+  res.render("home/index", { title: "Asset Lifecycle Management", active: "home" })
+);
 
-// Auth pages
+app.use("/shop", shopRoutes);
+
+// -------------------------------
+// Login / Logout
+// -------------------------------
 app.get("/login", (req, res) => {
-  if (req.session?.isAuthed) return res.redirect("/dashboard");
-  res.render("auth/login", { title: "Admin Login" });
+  if (req.session.user) return res.redirect("/dashboard");
+  res.render("auth/login", {
+    title: "Admin Login",
+    active: "login",
+    next: req.query.next || "",
+    error: null,
+  });
 });
-app.post("/login", (req, res) => {
-  const { username, password } = req.body;
-  const ok =
-    username === (process.env.ADMIN_USER || "admin") &&
-    password === (process.env.ADMIN_PASS || "changeme");
 
-  if (!ok) {
+app.post("/login", async (req, res) => {
+  const { username = "", password = "", next: nextUrl = "" } = req.body;
+
+  const okUser = username.trim() === (process.env.ADMIN_USER || "admin");
+  const okPass =
+    !!process.env.ADMIN_PASS_HASH &&
+    (await bcrypt.compare(password, process.env.ADMIN_PASS_HASH));
+
+  if (!okUser || !okPass) {
     return res.status(401).render("auth/login", {
       title: "Admin Login",
+      active: "login",
+      next: nextUrl,
       error: "Invalid credentials",
     });
   }
-  req.session.isAuthed = true;
-  req.session.user = { name: username };
-  res.redirect("/dashboard");
+
+  req.session.user = { name: username.trim() };
+  return res.redirect(nextUrl || "/dashboard");
 });
+
 app.post("/logout", (req, res) => {
   req.session.destroy(() => res.redirect("/"));
 });
 
+// -------------------------------
 // Admin-only routes
-app.use(["/devices", "/revenue", "/dashboard"], requireAuth);
+// -------------------------------
+app.use("/devices", requireAuth, devicesRoutes);
+app.use("/revenue", requireAuth, revenueRoutes);
 
-// Dashboard (live data)
-app.get("/dashboard", async (req, res) => {
+// Dashboard (admin)
+app.get("/dashboard", requireAuth, async (_req, res) => {
   try {
     const counts = await db.all(`
       SELECT status, COUNT(*) AS total
       FROM devices
       GROUP BY status
     `);
-    const map = Object.fromEntries(counts.map(c => [c.status, Number(c.total)]));
+    const map = Object.fromEntries(counts.map((c) => [c.status, Number(c.total)]));
+
     const latest = await db.all(`
       SELECT id, serial, brand, model, status, grade, price, intake_date
       FROM devices
@@ -123,10 +159,9 @@ app.get("/dashboard", async (req, res) => {
   }
 });
 
-// Feature routes (still work; they check res.locals.isAuthed which is set from session)
-app.use("/revenue", revenueRoutes);
-app.use("/devices", devicesRoutes);
-
-app.listen(PORT, () => {
-  console.log(`🚀 Refurb Admin running at http://localhost:${PORT}`);
-});
+// -------------------------------
+// Server
+// -------------------------------
+app.listen(PORT, () =>
+  console.log(`🚀 Refurb Admin running at http://localhost:${PORT}`)
+);

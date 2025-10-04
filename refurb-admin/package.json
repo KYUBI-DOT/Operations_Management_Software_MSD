@@ -11,6 +11,7 @@
     "db:migrate": "node scripts/migrate_add_resold_at.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "better-sqlite3": "^11",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",

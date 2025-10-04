@@ -1,90 +1,74 @@
-<%- include('../partials/head', { title: 'Devices' }) %>
-<%
-  // Pick active tab for header based on current filter
-  const activeTab =
-    !filter?.status ? 'all' :
-    (filter.status === 'pending'     ? 'pending'   :
-     filter.status === 'in_progress' ? 'inprogress':
-     filter.status === 'done'        ? 'done'      :
-     filter.status === 'resold'      ? 'resold'    : 'all');
-%>
-<%- include('../partials/header', { active: activeTab }) %>
+<%- include('../partials/header', { active: 'all' }) %>
 
 <h1 class="page-title">Devices</h1>
 
-<form class="filters" method="get" action="/devices<%= adminQS || '' %>">
-  <input class="input" type="text" name="q" placeholder="Search serial/model" value="<%= filter.q || '' %>" />
+<form class="filters" method="get" action="/devices">
+  <input class="input" type="text" name="q" placeholder="Search serial/model" value="<%= filter.q %>" />
   <select class="select" name="status">
     <option value="">All statuses</option>
     <% ['pending','in_progress','done','resold'].forEach(s => { %>
-      <option value="<%= s %>" <%= (filter.status===s ? 'selected' : '') %>><%= s %></option>
+      <option value="<%= s %>" <%= filter.status===s?'selected':'' %>><%= s %></option>
     <% }) %>
   </select>
   <button class="btn primary" type="submit">Apply</button>
 </form>
 
 <div class="table-wrap">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>ID</th><th>Serial</th><th>Model</th>
-        <th>Status</th><th>Grade</th><th>Price</th><th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% (devices || []).forEach(r => { %>
-        <tr>
-          <td><%= r.id %></td>
-          <td><%= r.serial %></td>
-          <td><%= r.model %></td>
-          <td><span class="badge <%= r.status %>"><%= r.status %></span></td>
-          <td><%= r.grade || '–' %></td>
-          <td><%= (r.price != null) ? ('$' + r.price) : '–' %></td>
-          <td class="row-actions">
+<table class="table">
+  <thead>
+    <tr><th>ID</th><th>Serial</th><th>Model</th><th>Status</th><th>Grade</th><th>Price</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+  <% (devices || []).forEach(r => { %>
+    <tr>
+      <td><%= r.id %></td>
+      <td><%= r.serial %></td>
+      <td><%= r.model %></td>
+      <td><span class="badge <%= r.status %>"><%= r.status %></span></td>
+      <td><%= r.grade || '–' %></td>
+      <td><%= r.price != null ? ('$' + r.price) : '–' %></td>
+      <td class="row-actions">
+        <% if (r.status !== 'resold') { %>
+          <a href="/devices/<%= r.id %>/edit">Edit</a>
+        <% } %>
 
-            <% if (r.status !== 'resold') { %>
-              <a class="btn link" href="/devices/<%= r.id %>/edit<%= adminQS || '' %>">Edit</a>
-            <% } %>
+        <% if (r.status === 'pending') { %>
+          <form method="post" action="/devices/<%= r.id %>/status" style="display:inline">
+            <input type="hidden" name="status" value="in_progress" />
+            <button class="btn" type="submit">Start Wipe</button>
+          </form>
+        <% } %>
 
-            <% if (r.status === 'pending') { %>
-              <form method="post" action="/devices/<%= r.id %>/status<%= adminQS || '' %>" style="display:inline">
-                <input type="hidden" name="status" value="in_progress" />
-                <button class="btn" type="submit">Start Wipe</button>
-              </form>
-            <% } %>
+        <% if (r.status === 'in_progress') { %>
+          <form method="post" action="/devices/<%= r.id %>/status" style="display:inline">
+            <input type="hidden" name="status" value="done" />
+            <button class="btn" type="submit">Mark Done</button>
+          </form>
+        <% } %>
 
-            <% if (r.status === 'in_progress') { %>
-              <form method="post" action="/devices/<%= r.id %>/status<%= adminQS || '' %>" style="display:inline">
-                <input type="hidden" name="status" value="done" />
-                <button class="btn" type="submit">Mark Done</button>
-              </form>
-            <% } %>
+        <% if (r.status === 'done') { %>
+          <form method="post" action="/devices/<%= r.id %>/grade" style="display:inline">
+            <select class="select" name="grade">
+              <option value="A" <%= r.grade==='A'?'selected':'' %>>A</option>
+              <option value="B" <%= r.grade==='B'?'selected':'' %>>B</option>
+              <option value="C" <%= r.grade==='C'?'selected':'' %>>C</option>
+            </select>
+            <button class="btn" type="submit">Set Grade</button>
+          </form>
+          <form method="post" action="/devices/<%= r.id %>/resell" style="display:inline">
+            <input class="input" type="number" name="price" step="0.01" placeholder="Price" />
+            <button class="btn primary" type="submit">Resell</button>
+          </form>
+        <% } %>
 
-            <% if (r.status === 'done') { %>
-              <form method="post" action="/devices/<%= r.id %>/grade<%= adminQS || '' %>" style="display:inline">
-                <select class="select" name="grade">
-                  <option value="A" <%= r.grade==='A'?'selected':'' %>>A</option>
-                  <option value="B" <%= r.grade==='B'?'selected':'' %>>B</option>
-                  <option value="C" <%= r.grade==='C'?'selected':'' %>>C</option>
-                </select>
-                <button class="btn" type="submit">Set Grade</button>
-              </form>
-              <form method="post" action="/devices/<%= r.id %>/resell<%= adminQS || '' %>" style="display:inline">
-                <input class="input" type="number" name="price" step="0.01" placeholder="Price" />
-                <button class="btn primary" type="submit">Resell</button>
-              </form>
-            <% } %>
-
-            <form method="post" action="/devices/<%= r.id %>/delete<%= adminQS || '' %>" style="display:inline" onsubmit="return confirm('Delete device?')">
-              <button class="btn ghost" type="submit">Delete</button>
-            </form>
-
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
+        <form method="post" action="/devices/<%= r.id %>/delete" style="display:inline" onsubmit="return confirm('Delete device?')">
+          <button class="btn ghost" type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table>
 </div>
 
 <%- include('../partials/footer') %>
-<%- include('../partials/end') %>

@@ -1,9 +1,8 @@
-<%- include('../partials/head',   { title: `Edit Device #${d.id}` }) %>
 <%- include('../partials/header', { active: 'all' }) %>
 
 <h1 class="page-title">Edit Device #<%= d.id %></h1>
 
-<form class="form" method="post" action="/devices/<%= d.id %>/status<%= adminQS || '' %>">
+<form class="form" method="post" action="/devices/<%= d.id %>/status">
   <label><span>Status</span>
     <select class="select" name="status">
       <% ['pending','in_progress','done','resold'].forEach(s => { %>
@@ -14,7 +13,7 @@
   <button class="btn" type="submit">Update Status</button>
 </form>
 
-<form class="form" method="post" action="/devices/<%= d.id %>/grade<%= adminQS || '' %>">
+<form class="form" method="post" action="/devices/<%= d.id %>/grade">
   <label><span>Grade</span>
     <select class="select" name="grade">
       <option value="">—</option>
@@ -26,13 +25,11 @@
   <button class="btn" type="submit">Save Grade</button>
 </form>
 
-<form class="form" method="post" action="/devices/<%= d.id %>/resell<%= adminQS || '' %>">
-  <label>
-    <span>Price (if resold)</span>
-    <input class="input" type="number" name="price" step="0.01" value="<%= d.price ?? '' %>"/>
+<form class="form" method="post" action="/devices/<%= d.id %>/resell">
+  <label><span>Price (if resold)</span>
+    <input class="input" type="number" name="price" step="0.01" value="<%= d.price ?? '' %>" />
   </label>
   <button class="btn primary" type="submit">Resell</button>
 </form>
 
 <%- include('../partials/footer') %>
-<%- include('../partials/end') %>

@@ -3,34 +3,44 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/home.css?v=<%= cacheBuster %>"><!-- simple public css -->
+  <title><%= title || 'Admin Login' %></title>
+  <link rel="stylesheet" href="/home.css?v=<%= cacheBuster %>">
 </head>
 <body>
   <header class="home-header">
     <div class="logo">🛡️ Admin Access</div>
-    <nav class="nav"><a href="/">Home</a><a href="/shop">Shop</a></nav>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/shop">Shop</a>
+    </nav>
   </header>
 
   <main class="hero" style="padding-block:60px;">
     <h1>Admin Login</h1>
     <p>Sign in to manage devices, wipes, grading, and revenue.</p>
-  </main>
 
-  <section style="max-width:480px;margin:20px auto;padding:0 16px;">
-    <% if (typeof error !== 'undefined' && error) { %>
-      <div style="background:#fee2e2;border:1px solid #fecaca;color:#7f1d1d;padding:10px 12px;border-radius:10px;margin-bottom:12px;">
-        <strong><%= error %></strong>
+    <% if (error) { %>
+      <div class="card" style="max-width:460px; margin:12px auto; border-left:4px solid #ef4444;">
+        <p class="muted" style="color:#b91c1c;"><%= error %></p>
       </div>
     <% } %>
 
-    <form method="post" action="/login" class="form" style="display:grid;gap:12px;">
-      <label><span>Username</span><input name="username" required style="padding:10px;border:1px solid #ddd;border-radius:8px;width:100%"></label>
-      <label><span>Password</span><input type="password" name="password" required style="padding:10px;border:1px solid #ddd;border-radius:8px;width:100%"></label>
-      <button class="cta" style="border:none;cursor:pointer;">Login</button>
+    <form class="cards" method="post" action="/login" style="max-width:520px; margin:0 auto;">
+      <input type="hidden" name="next" value="<%= next || '' %>"/>
+      <div class="card" style="gap:8px;">
+        <label>Username
+          <input class="input" name="username" autocomplete="username" required />
+        </label>
+        <label>Password
+          <input class="input" type="password" name="password" autocomplete="current-password" required />
+        </label>
+        <button class="cta" type="submit" style="width:100%;">Login</button>
+      </div>
     </form>
-  </section>
+  </main>
 
-  <footer class="footer"><p>© <%= new Date().getFullYear() %> Refurb Admin</p></footer>
+  <footer class="footer">
+    <p>© <%= new Date().getFullYear() %> Refurb Admin</p>
+  </footer>
 </body>
 </html>

@@ -81,6 +81,56 @@ app.get("/", (_req, res) =>
 
 app.use("/shop", shopRoutes);
 
+// Public: Partner With Us (form)
+app.get("/partner", (req, res) => {
+  res.render("home/partner", {
+    title: "Partner With Us",
+    active: "home",
+    sent: req.query.sent === "1", // we'll show a success banner next step
+  });
+});
+
+app.post("/partner", (req, res) => {
+  const {
+    org_name,
+    contact_name,
+    contact_email,
+    contact_phone,
+    quantity,
+    logistics,
+    timeline,
+    locations,
+    compliance,
+    notes,
+  } = req.body;
+
+  // normalize checkbox group -> always an array
+  const types = Array.isArray(req.body.types)
+    ? req.body.types
+    : req.body.types
+      ? [req.body.types]
+      : [];
+
+  // For now: log it (later we can store/email)
+  console.log("[PARTNER REQUEST]", {
+    org_name,
+    contact_name,
+    contact_email,
+    contact_phone,
+    types,
+    quantity: quantity ? Number(quantity) : null,
+    logistics,
+    timeline,
+    locations,
+    compliance,
+    notes,
+  });
+
+  // Redirect back with success flag
+  res.redirect("/partner?sent=1");
+});
+
+
 // -------------------------------
 // Login / Logout
 // -------------------------------

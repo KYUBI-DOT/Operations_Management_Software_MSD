@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title><%= title || 'Partner With Us' %></title>
+  <link rel="stylesheet" href="/home.css?v=<%= cacheBuster %>">
+</head>
+<body>
+  <!-- public header with Admin on the right if logged in -->
+  <header class="home-header">
+    <div class="logo">🤝 Partner With Us</div>
+
+    <nav class="nav">
+      <a href="/" class="<%= active==='home' ? 'active' : '' %>">Home</a>
+      <a href="/shop" class="<%= active==='shop' ? 'active' : '' %>">Shop</a>
+    </nav>
+
+    <div class="nav-actions">
+      <% if (!isAuthed) { %>
+        <a class="btn-admin" href="/login">Admin</a>
+      <% } else { %>
+        <a class="btn-admin" href="/dashboard">Dashboard</a>
+        <form method="post" action="/logout" style="display:inline">
+          <button class="btn-admin btn-outline" type="submit">Logout</button>
+        </form>
+      <% } %>
+    </div>
+  </header>
+
+  <main class="hero" style="padding-block:48px;">
+    <h1>Partner With Us</h1>
+    <p>Tell us about your upcoming refresh. We’ll handle chain-of-custody, verified data erasure, grading, and reporting — end to end.</p>
+  </main>
+
+  <!-- form -->
+  <section class="features" style="padding-top:0;">
+    <form class="cards" method="post" action="/partner" style="max-width:900px; margin:0 auto;">
+      <div class="card" style="display:grid; gap:12px;">
+        <h3>Organization</h3>
+        <label>Organization name
+          <input class="input" name="org_name" required />
+        </label>
+
+        <div style="display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+          <label>Contact person
+            <input class="input" name="contact_name" required />
+          </label>
+          <label>Email
+            <input class="input" type="email" name="contact_email" required />
+          </label>
+          <label>Phone (optional)
+            <input class="input" type="tel" name="contact_phone" />
+          </label>
+        </div>
+      </div>
+
+      <div class="card" style="display:grid; gap:12px;">
+        <h3>Devices You’re Disposing</h3>
+        <div class="muted">Select all that apply.</div>
+        <div style="display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
+          <label><input type="checkbox" name="types" value="laptops" /> Laptops</label>
+          <label><input type="checkbox" name="types" value="desktops" /> Desktops</label>
+          <label><input type="checkbox" name="types" value="monitors" /> Monitors</label>
+          <label><input type="checkbox" name="types" value="tablets" /> Tablets</label>
+          <label><input type="checkbox" name="types" value="phones" /> Phones</label>
+          <label><input type="checkbox" name="types" value="other" /> Other</label>
+        </div>
+
+        <div style="display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+          <label>Approx. quantity
+            <input class="input" type="number" min="1" name="quantity" />
+          </label>
+          <label>Pickup or shipment?
+            <select class="select" name="logistics">
+              <option value="pickup">Pickup</option>
+              <option value="shipment">Shipment</option>
+              <option value="both">Either / Both</option>
+            </select>
+          </label>
+          <label>Target timeline
+            <select class="select" name="timeline">
+              <option value="asap">ASAP (1–2 weeks)</option>
+              <option value="this_month">This month</option>
+              <option value="this_quarter">This quarter</option>
+              <option value="date_fixed">Fixed date (specify below)</option>
+            </select>
+          </label>
+        </div>
+
+        <label>Pickup / site locations (city, state or postcode)
+          <input class="input" name="locations" placeholder="e.g., Perth CBD; Joondalup; Fremantle" />
+        </label>
+      </div>
+
+      <div class="card" style="display:grid; gap:12px;">
+        <h3>Compliance & Notes</h3>
+        <label>Any specific erasure policy or compliance requirements?
+          <textarea class="input" name="compliance" placeholder="e.g., NIST 800-88-aligned, reporting format, chain-of-custody details"></textarea>
+        </label>
+
+        <label>Additional notes / fixed dates
+          <textarea class="input" name="notes" placeholder="Anything else we should know"></textarea>
+        </label>
+      </div>
+
+      <div class="card" style="display:flex; gap:10px; align-items:center; justify-content:flex-end;">
+        <button class="cta" type="submit">Send Request</button>
+      </div>
+    </form>
+  </section>
+
+  <footer class="footer">
+    <p>© <%= new Date().getFullYear() %> Refurb Admin. All rights reserved.</p>
+  </footer>
+</body>
+</html>

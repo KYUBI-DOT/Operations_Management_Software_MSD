@@ -24,8 +24,7 @@
 </section>
 
 <h2 style="margin:22px 0 10px">Recent Activity</h2>
-
-<div class="table-wrap card">
+<div class="table-wrap">
   <table class="table">
     <thead>
       <tr>
@@ -34,23 +33,17 @@
       </tr>
     </thead>
     <tbody>
-      <% if ((latest || []).length === 0) { %>
+      <% ((latest || [])).forEach(r => { %>
         <tr>
-          <td colspan="7" class="muted">No recent activity yet.</td>
+          <td><%= r.id %></td>
+          <td><%= r.serial %></td>
+          <td><%= r.model %></td>
+          <td><span class="badge <%= r.status %>"><%= r.status %></span></td>
+          <td><%= r.grade || '–' %></td>
+          <td><%= r.price != null ? ('$' + r.price) : '–' %></td>
+          <td><%= r.intake_date %></td>
         </tr>
-      <% } else { %>
-        <% (latest || []).forEach(r => { %>
-          <tr>
-            <td><%= r.id %></td>
-            <td><%= r.serial %></td>
-            <td><%= r.model %></td>
-            <td><span class="badge <%= r.status %>"><%= r.status %></span></td>
-            <td><%= r.grade || '–' %></td>
-            <td><%= r.price != null ? ('$' + r.price) : '–' %></td>
-            <td><%= r.intake_date || r.updated_at || '—' %></td>
-          </tr>
-        <% }) %>
-      <% } %>
+      <% }) %>
     </tbody>
   </table>
 </div>

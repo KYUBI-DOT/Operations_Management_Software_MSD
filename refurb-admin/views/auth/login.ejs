@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/home.css?v=<%= cacheBuster %>"><!-- simple public css -->
+</head>
+<body>
+  <header class="home-header">
+    <div class="logo">🛡️ Admin Access</div>
+    <nav class="nav"><a href="/">Home</a><a href="/shop">Shop</a></nav>
+  </header>
+
+  <main class="hero" style="padding-block:60px;">
+    <h1>Admin Login</h1>
+    <p>Sign in to manage devices, wipes, grading, and revenue.</p>
+  </main>
+
+  <section style="max-width:480px;margin:20px auto;padding:0 16px;">
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div style="background:#fee2e2;border:1px solid #fecaca;color:#7f1d1d;padding:10px 12px;border-radius:10px;margin-bottom:12px;">
+        <strong><%= error %></strong>
+      </div>
+    <% } %>
+
+    <form method="post" action="/login" class="form" style="display:grid;gap:12px;">
+      <label><span>Username</span><input name="username" required style="padding:10px;border:1px solid #ddd;border-radius:8px;width:100%"></label>
+      <label><span>Password</span><input type="password" name="password" required style="padding:10px;border:1px solid #ddd;border-radius:8px;width:100%"></label>
+      <button class="cta" style="border:none;cursor:pointer;">Login</button>
+    </form>
+  </section>
+
+  <footer class="footer"><p>© <%= new Date().getFullYear() %> Refurb Admin</p></footer>
+</body>
+</html>

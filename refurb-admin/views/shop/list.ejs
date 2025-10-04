@@ -1,32 +1,68 @@
-<%- include('../partials/head',   { title: (typeof title !== 'undefined' ? title : 'Shop') }) %>
-<%- include('../partials/header', { active: (typeof active !== 'undefined' ? active : 'shop') }) %>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title><%= title || 'Shop' %></title>
 
-<h1>💻 Devices Available for Purchase</h1>
-<p class="subtle">Certified devices ready for sale. Grades reflect cosmetic/functional quality.</p>
+  <!-- Public site CSS -->
+  <link rel="stylesheet" href="/home.css?v=<%= cacheBuster %>">
+</head>
+<body>
+  <!-- public header -->
+  <header class="home-header">
+    <div class="logo">🛒 Refurb Shop</div>
 
-<% const _items = Array.isArray(items) ? items : []; %>
+    <nav class="nav">
+      <a class="<%= (active==='home') ? 'active' : '' %>" href="/">Home</a>
+      <a class="<%= (active==='shop') ? 'active' : '' %>" href="/shop">Shop</a>
+    </nav>
 
-<% if (_items.length === 0) { %>
-  <div class="card" style="margin-top:1rem;">
-    <p class="muted">No devices are available right now. Please check back later.</p>
-  </div>
-<% } else { %>
-  <div class="grid" style="margin-top:1rem;">
-    <% _items.forEach(it => { %>
-      <div class="card">
-        <h3><%= (it.brand ? it.brand + ' ' : '') + it.model %></h3>
-        <p class="muted">Grade: <strong><%= it.grade %></strong></p>
-        <p class="price"><%= it.price != null ? ('$' + it.price) : '—' %></p>
-
-        <!-- Placeholder add-to-cart (wire up later if needed) -->
-        <form method="post" action="/shop/add-to-cart">
-          <input type="hidden" name="id" value="<%= it.id %>"/>
-          <button class="btn primary" type="submit">Add to cart</button>
+    <div class="nav-actions">
+      <% if (!isAuthed) { %>
+        <a class="btn-admin" href="/login">Admin</a>
+      <% } else { %>
+        <a class="btn-admin" href="/dashboard">Dashboard</a>
+        <form method="post" action="/logout" style="display:inline">
+          <button class="btn-admin btn-outline" type="submit">Logout</button>
         </form>
-      </div>
-    <% }) %>
-  </div>
-<% } %>
+      <% } %>
+    </div>
+  </header>
 
-<%- include('../partials/footer') %>
-<%- include('../partials/end') %>
+  <!-- hero -->
+  <main class="hero" style="padding-block:60px;">
+    <h1>Devices Available for Purchase</h1>
+    <p>Certified devices ready for sale. Grades reflect cosmetic/functional quality.</p>
+  </main>
+
+  <% const items = (typeof devices !== 'undefined' && Array.isArray(devices)) ? devices : []; %>
+
+  <!-- product grid -->
+  <section class="features" style="padding-top:30px;">
+    <div class="cards" style="max-width:1100px;">
+      <% items.forEach(it => { %>
+        <div class="card">
+          <h3><%= (it.brand ? it.brand + ' ' : '') + it.model %></h3>
+          <p class="muted">Grade: <strong><%= it.grade %></strong></p>
+          <p style="margin:.25rem 0 1rem;">
+            <strong>$<%= (it.price != null ? Number(it.price) : 0).toFixed(0) %></strong>
+          </p>
+          <a class="cta" href="#">Add to cart</a>
+        </div>
+      <% }) %>
+
+      <% if (items.length === 0) { %>
+        <div class="card" style="grid-column:1/-1; text-align:center;">
+          <h3>No devices available right now</h3>
+          <p class="muted">Please check back soon — new stock is added regularly.</p>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© <%= new Date().getFullYear() %> Refurb Admin. All rights reserved.</p>
+  </footer>
+</body>
+</html>

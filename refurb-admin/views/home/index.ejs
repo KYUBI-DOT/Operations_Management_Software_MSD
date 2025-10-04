@@ -3,49 +3,203 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title><%= title %></title>
-
-  <!-- Public CSS -->
+  <title><%= title || 'Asset Lifecycle Management' %></title>
   <link rel="stylesheet" href="/home.css?v=<%= cacheBuster %>">
 </head>
 <body>
-  <header class="home-header">
-    <div class="logo">♻️ Refurb Admin</div>
-    <nav class="nav">
-      <a href="/">Home</a>
-      <a href="/shop">Shop</a>
-    </nav>
-  </header>
+  <!-- Public header -->
+ <header class="home-header">
+  <div class="logo">♻️ Refurb Admin</div>
 
-  <main class="hero">
+  <nav class="nav">
+    <a href="/" class="<%= active==='home' ? 'active' : '' %>">Home</a>
+    <a href="/shop" class="<%= active==='shop' ? 'active' : '' %>">Shop</a>
+  </nav>
+
+  <div class="nav-actions">
+    <% if (!isAuthed) { %>
+      <a class="btn-admin" href="/login">Admin</a>
+    <% } else { %>
+      <a class="btn-admin" href="/dashboard">Dashboard</a>
+      <form method="post" action="/logout" style="display:inline">
+        <button class="btn-admin btn-outline" type="submit">Logout</button>
+      </form>
+    <% } %>
+  </div>
+</header>
+
+
+  <!-- Hero -->
+  <main class="hero" style="padding-block:78px;">
     <h1>Asset Lifecycle Management</h1>
-    <p>We securely wipe, refurbish, and resell devices from schools, banks, and enterprises.</p>
+    <p>We collect used devices from schools, banks, and enterprises, perform verified data erasure, refurbish to a quality standard, certify the wipe to the provider, and make the devices available for resale.</p>
     <a class="cta" href="/shop">Browse Devices</a>
+
+    <div style="margin-top:16px;">
+      <span class="pill">Verified data erasure</span>
+      <span class="pill">Cosmetic clean & quality checks</span>
+      <span class="pill">Grading & transparent pricing</span>
+      <span class="pill">Certificate of data deletion</span>
+    </div>
   </main>
 
+  <!-- Who we serve -->
   <section class="features">
-    <h2>What We Do</h2>
+    <h2>Who We Serve</h2>
     <div class="cards">
       <div class="card">
-        <img src="/images/iphone.jpg" alt="iPhone"/>
+        <h3>Education (K-12 & Higher Ed)</h3>
+        <p class="muted">Semester refreshes, 1:1 programs, and lab upgrades — we handle pickup, chain-of-custody, and certified wipe.</p>
+      </div>
+      <div class="card">
+        <h3>Financial Services & Banks</h3>
+        <p class="muted">Strict data handling with wipe confirmations for audit trails and end-of-lease device returns.</p>
+      </div>
+      <div class="card">
+        <h3>Public Sector & Enterprise</h3>
+        <p class="muted">Secure transport, standardized reporting, and consistent grading for internal redeploy or resale.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="features">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h3>Intake & Logistics</h3>
+        <p class="muted">We schedule pickup or receive shipments, register devices, and start a chain-of-custody record.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3>Secure Data Erasure</h3>
+        <p class="muted">Industry-standard wiping (e.g., NIST 800-88-aligned approaches) with verification and exceptions noted for reporting.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3>Refurbish & Test</h3>
+        <p class="muted">Cosmetic clean, functional checks, and basic component replacements where appropriate.</p>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <h3>Grade & Price</h3>
+        <p class="muted">Clear A/B/C grading to set expectations; pricing reflects condition and market demand.</p>
+      </div>
+      <div class="step">
+        <div class="num">5</div>
+        <h3>Certify & Report</h3>
+        <p class="muted">Providers receive a wipe confirmation and summary report for asset records and audits.</p>
+      </div>
+      <div class="step">
+        <div class="num">6</div>
+        <h3>Resell or Redeploy</h3>
+        <p class="muted">Eligible devices are listed in our shop or returned for internal redeployment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why choose us -->
+  <section class="features">
+    <h2>Why Organizations Partner With Us</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Proof of Erasure</h3>
+        <p class="muted">Each batch receives wipe confirmation to support compliance reviews and audits.</p>
+      </div>
+      <div class="card">
+        <h3>Transparent Valuation</h3>
+        <p class="muted">Simple grading, fair pricing, and optional revenue-share / buyback structures.</p>
+      </div>
+      <div class="card">
+        <h3>Operational Ease</h3>
+        <p class="muted">Pickup scheduling, labeling, and tracking so your teams spend less time on logistics.</p>
+      </div>
+      <div class="card">
+        <h3>Quality You Can See</h3>
+        <p class="muted">Refurb standards focused on reliability and cosmetic presentation for the next owner.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Devices we refurbish (kept from your page, now with images) -->
+  <section class="features" style="padding-top:30px;">
+    <h2>Devices We Refurbish</h2>
+    <div class="cards" style="max-width:1100px;">
+      <div class="card">
+        <img src="/images/iphone14.jpg?v=<%= cacheBuster %>" alt="iPhone 14"/>
         <h3>Phones</h3>
-        <p>Certified pre-owned phones with data securely erased.</p>
+        <p class="muted">Certified pre-owned phones with data securely erased.</p>
       </div>
       <div class="card">
-        <img src="/images/monitor.jpg" alt="Monitor"/>
+        <img src="/images/dell-monitor.jpg?v=<%= cacheBuster %>" alt="Dell Monitor"/>
         <h3>Monitors</h3>
-        <p>High-quality refurbished monitors, tested and cleaned.</p>
+        <p class="muted">High-quality refurbished monitors, tested and cleaned.</p>
       </div>
       <div class="card">
-        <img src="/images/laptop1.jpg" alt="Laptop"/>
+        <img src="/images/dell-laptop.jpg?v=<%= cacheBuster %>" alt="Dell Laptop"/>
         <h3>Laptops</h3>
-        <p>Enterprise laptops refurbished for extended lifecycle.</p>
+        <p class="muted">Enterprise laptops refurbished for an extended lifecycle.</p>
       </div>
       <div class="card">
-        <img src="/images/laptop2.jpg" alt="Laptop"/>
+        <img src="/images/lenovo-laptop.jpg?v=<%= cacheBuster %>" alt="Lenovo Laptop"/>
         <h3>Ultrabooks</h3>
-        <p>Sleek ultrabooks with reliable performance.</p>
+        <p class="muted">Sleek ultrabooks with reliable performance.</p>
       </div>
+    </div>
+  </section>
+
+  <!-- Sustainability -->
+  <section class="features">
+    <h2>Sustainability & Circularity</h2>
+    <div class="kpis">
+      <div class="kpi">
+        <h3>Extend Device Lifespan</h3>
+        <p class="muted">Refurbishment keeps functioning hardware in use and diverts it from e-waste streams.</p>
+      </div>
+      <div class="kpi">
+        <h3>Reduce Embodied Carbon</h3>
+        <p class="muted">Re-use helps avoid manufacturing emissions associated with brand-new replacements.</p>
+      </div>
+      <div class="kpi">
+        <h3>Responsible Disposition</h3>
+        <p class="muted">Non-viable units are separated for appropriate downstream recycling.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQs -->
+  <section class="features">
+    <h2>Frequently Asked Questions</h2>
+
+    <details open>
+      <summary>What proof do we receive that data was erased?</summary>
+      <p class="muted">We provide a wipe confirmation for each processed batch along with a summary report capturing any exceptions.</p>
+    </details>
+
+    <details>
+      <summary>Which standards do you align to for data erasure?</summary>
+      <p class="muted">Our process uses industry-standard approaches (e.g., NIST 800-88-aligned methods). If you require a specific policy, we can discuss it during onboarding.</p>
+    </details>
+
+    <details>
+      <summary>Can we redeploy internally instead of reselling?</summary>
+      <p class="muted">Yes. We can return devices after wipe/grade for internal reuse, or list eligible devices in the public shop.</p>
+    </details>
+
+    <details>
+      <summary>Do you pick up from multiple sites?</summary>
+      <p class="muted">We can schedule multi-site pickups and consolidate reporting so your team sees one clean record.</p>
+    </details>
+  </section>
+
+  <!-- Partner CTA -->
+  <section class="hero" style="padding-block:42px;">
+    <h2 style="margin:0 0 8px;">Ready to Close the Loop?</h2>
+    <p>Let’s design a lifecycle plan that fits your refresh schedule and compliance needs.</p>
+    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+      <a class="cta" href="/shop">Browse Devices</a>
+      <a class="cta" href="/login" style="background:#10b981;">Admin Login</a>
     </div>
   </section>
 

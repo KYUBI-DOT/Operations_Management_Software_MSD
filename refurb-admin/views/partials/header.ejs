@@ -1,50 +1,43 @@
 <%
-  const _active  = (typeof active  !== 'undefined' && active)  ? active  : '';
-  const _adminQS = (typeof adminQS !== 'undefined' && adminQS) ? adminQS : '';
-  const qsJoin   = _adminQS ? ('&' + _adminQS.slice(1)) : '';
+  const _active = (typeof active !== 'undefined' && active) ? active : '';
+  const brandHref = isAuthed ? '/dashboard' : '/';
 %>
 
 <header class="topbar">
   <div class="topbar-inner">
-    <!-- LEFT SIDE -->
+    <!-- LEFT -->
     <div class="left-wrap">
-      <a class="brand" href="/dashboard<%= _adminQS %>">
+      <a class="brand" href="<%= brandHref %>">
         <span class="logo">🧰</span> Refurb Admin
       </a>
 
       <nav class="nav-left">
-        <a class="<%= _active==='dashboard' ? 'active' : '' %>"
-           href="/dashboard<%= _adminQS %>">Dashboard</a>
-
-        <a class="<%= _active==='all' ? 'active' : '' %>"
-           href="/devices<%= _adminQS %>">All Devices</a>
-
-        <a class="<%= _active==='pending' ? 'active' : '' %>"
-           href="/devices?status=pending<%= qsJoin %>">Pending</a>
-
-        <a class="<%= _active==='inprogress' ? 'active' : '' %>"
-           href="/devices?status=in_progress<%= qsJoin %>">In Progress</a>
-
-        <a class="<%= _active==='done' ? 'active' : '' %>"
-           href="/devices?status=done<%= qsJoin %>">Done</a>
-
-        <a class="<%= _active==='resold' ? 'active' : '' %>"
-           href="/devices?status=resold<%= qsJoin %>">Resold</a>
-
-        <a class="<%= _active==='shop' ? 'active' : '' %>"
-           href="/shop">Shop</a>
+        <% if (isAuthed) { %>
+          <a class="<%= _active==='dashboard' ? 'active' : '' %>" href="/dashboard">Dashboard</a>
+          <a class="<%= _active==='all' ? 'active' : '' %>" href="/devices">All Devices</a>
+          <a class="<%= _active==='pending' ? 'active' : '' %>" href="/devices?status=pending">Pending</a>
+          <a class="<%= _active==='inprogress' ? 'active' : '' %>" href="/devices?status=in_progress">In Progress</a>
+          <a class="<%= _active==='done' ? 'active' : '' %>" href="/devices?status=done">Done</a>
+          <a class="<%= _active==='resold' ? 'active' : '' %>" href="/devices?status=resold">Resold</a>
+          <a class="<%= _active==='shop' ? 'active' : '' %>" href="/shop">Shop</a>
+        <% } else { %>
+          <a class="<%= _active==='home' ? 'active' : '' %>" href="/">Home</a>
+          <a class="<%= _active==='shop' ? 'active' : '' %>" href="/shop">Shop</a>
+        <% } %>
       </nav>
     </div>
 
-    <!-- RIGHT SIDE -->
+    <!-- RIGHT -->
     <div class="nav-right">
-      <span class="topbar-sep" aria-hidden="true"></span>
-
-      <a class="btn btn-primary <%= _active==='new' ? 'active' : '' %>"
-         href="/devices/new<%= _adminQS %>">+ New</a>
-
-      <a class="btn ghost <%= _active==='revenue' ? 'active' : '' %>"
-         href="/revenue<%= _adminQS %>">Revenue</a>
+      <% if (isAuthed) { %>
+        <a class="btn primary <%= _active==='new' ? 'active' : '' %>" href="/devices/new">+ New</a>
+        <a class="btn ghost <%= _active==='revenue' ? 'active' : '' %>" href="/revenue">Revenue</a>
+        <form method="post" action="/logout" style="display:inline">
+          <button class="btn ghost" type="submit">Logout</button>
+        </form>
+      <% } else { %>
+        <a class="btn ghost" href="/login">Login</a>
+      <% } %>
     </div>
   </div>
 </header>

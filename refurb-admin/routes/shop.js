@@ -4,22 +4,16 @@ import db from "../db.js";
 
 const router = express.Router();
 
-/**
- * Query helper that works with either:
- *  - sqlite3 callback API (db.all(sql, params, cb))
- *  - sqlite promise API (await db.all(sql, params))
- */
+// works with sqlite3 callback or sqlite promise API
 async function queryAll(sql, params = []) {
   const maybe = db.all(sql, params);
-  if (maybe && typeof maybe.then === "function") {
-    return await maybe; // sqlite promise API
-  }
-  return await new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => (err ? reject(err) : resolve(rows)));
-  });
+  if (maybe && typeof maybe.then === "function") return await maybe;
+  return await new Promise((resolve, reject) =>
+    db.all(sql, params, (err, rows) => (err ? reject(err) : resolve(rows)))
+  );
 }
 
-// GET /shop — public catalog: only sellable devices
+// Public shop – show items ready to buy (done + graded)
 router.get("/", async (_req, res) => {
   try {
     const rows = await queryAll(
@@ -33,8 +27,8 @@ router.get("/", async (_req, res) => {
 
     res.render("shop/list", {
       title: "Shop",
-      active: "shop",  // header highlight
-      items: rows || []
+      active: "shop",
+      devices: rows || [],
     });
   } catch (err) {
     console.error("Shop query error:", err);

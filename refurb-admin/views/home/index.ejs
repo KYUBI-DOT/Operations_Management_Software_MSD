@@ -8,28 +8,26 @@
 </head>
 <body>
   <!-- Public header -->
- <header class="home-header">
-  <div class="logo">♻️ Refurb Admin</div>
+  <header class="home-header">
+    <div class="logo">♻️ Refurb Admin</div>
 
-  <nav class="nav">
-    <a href="/" class="<%= active==='home' ? 'active' : '' %>">Home</a>
-    <a href="/shop" class="<%= active==='shop' ? 'active' : '' %>">Shop</a>
-    <a href="/partner" class="<%= active==='partner' ? 'active' : '' %>">Partner</a>
-  </nav>
+    <nav class="nav">
+      <a href="/" class="<%= active==='home' ? 'active' : '' %>">Home</a>
+      <a href="/shop" class="<%= active==='shop' ? 'active' : '' %>">Shop</a>
+      <a href="/partner" class="<%= active==='partner' ? 'active' : '' %>">Partner</a>
+    </nav>
 
-  <div class="nav-actions">
-    <% if (!isAuthed) { %>
-      <a class="btn-admin" href="/login">Admin</a>
-    <% } else { %>
-      <a class="btn-admin" href="/dashboard">Dashboard</a>
-      <form method="post" action="/logout" style="display:inline">
-        <button class="btn-admin btn-outline" type="submit">Logout</button>
-      </form>
-    <% } %>
-  </div>
-</header>
-
-
+    <div class="nav-actions">
+      <% if (!isAuthed) { %>
+        <a class="btn-admin" href="/login">Admin</a>
+      <% } else { %>
+        <a class="btn-admin" href="/dashboard">Dashboard</a>
+        <form method="post" action="/logout" style="display:inline">
+          <button class="btn-admin btn-outline" type="submit">Logout</button>
+        </form>
+      <% } %>
+    </div>
+  </header>
 
   <!-- Hero -->
   <main class="hero" style="padding-block:78px;">
@@ -124,7 +122,7 @@
     </div>
   </section>
 
-  <!-- Devices we refurbish (kept from your page, now with images) -->
+  <!-- Devices we refurbish -->
   <section class="features" style="padding-top:30px;">
     <h2>Devices We Refurbish</h2>
     <div class="cards" style="max-width:1100px;">
@@ -195,13 +193,12 @@
     </details>
   </section>
 
-  <!-- Partner CTA -->
+  <!-- Partner CTA (Admin button removed) -->
   <section class="hero" style="padding-block:42px;">
     <h2 style="margin:0 0 8px;">Ready to Close the Loop?</h2>
     <p>Let’s design a lifecycle plan that fits your refresh schedule and compliance needs.</p>
     <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
       <a class="cta" href="/shop">Browse Devices</a>
-      <a class="cta" href="/login" style="background:#10b981;">Admin Login</a>
     </div>
   </section>
 

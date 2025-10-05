@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/home.css?v=<%= cacheBuster %>">
 </head>
 <body>
-  <!-- public header with Admin on the right if logged in -->
+  <!-- Header -->
   <header class="home-header">
     <div class="logo">🤝 Partner With Us</div>
 
@@ -29,153 +29,174 @@
     </div>
   </header>
 
-  <!-- success banner -->
-  <% if (typeof sent !== 'undefined' && sent) { %>
-    <div class="banner success" role="status" aria-live="polite">
-      <strong>Thanks!</strong> Your request was sent. We’ll get back to you within 1–2 business days.
-    </div>
-  <% } %>
-
-  <!-- hero -->
-  <main class="hero hero--soft" style="padding-block:48px;">
-    <p class="eyebrow">Work With Us</p>
+  <!-- Hero -->
+  <main class="hero hero--soft" style="padding-block:56px;">
+    <div class="eyebrow">Partner program</div>
     <h1 class="hero-title">Streamlined Asset Disposition for Orgs</h1>
-    <p class="hero-sub">Tell us about your refresh. We’ll handle chain-of-custody, verified data erasure, grading, certification, and reporting—end to end.</p>
+    <p class="hero-sub">
+      Tell us about your refresh. We’ll handle chain-of-custody, verified data erasure,
+      grading, certification, and reporting—end to end.
+    </p>
+
+    <% if (sent) { %>
+      <div class="banner success" role="status" aria-live="polite">
+        ✅ Thanks! Your request was sent. We’ll follow up shortly.
+      </div>
+    <% } %>
   </main>
 
-  <!-- layout: form + sticky summary -->
-  <section class="section" style="padding-top:24px;">
+  <!-- Content -->
+  <section class="section" style="padding-top:30px;">
     <div class="layout-2col">
-      <!-- form -->
-      <form class="cards" method="post" action="/partner" novalidate>
-        <!-- Organization -->
-        <div class="card" style="display:grid; gap:12px;">
-          <h3>Organization</h3>
-          <label>Organization name
-            <input class="input" name="org_name" required autocomplete="organization" />
-            <small class="help">Legal or trading name for the agreement.</small>
-          </label>
+
+      <!-- FORM COLUMN -->
+      <form class="form-stack" method="post" action="/partner" novalidate>
+        <!-- Org -->
+        <div class="card form-card lift">
+          <header class="card-head">
+            <h3>Organization</h3>
+            <p class="sub">Tell us who we’ll be working with.</p>
+          </header>
+
+          <div class="field">
+            <label>Organization name
+              <input class="input" name="org_name" required placeholder="Legal or trading name"/>
+            </label>
+          </div>
 
           <div class="grid-3">
-            <label>Contact person
-              <input class="input" name="contact_name" required autocomplete="name" />
-            </label>
-            <label>Email
-              <input class="input" type="email" name="contact_email" required autocomplete="email" />
-            </label>
-            <label>Phone (optional)
-              <input class="input" type="tel" name="contact_phone" autocomplete="tel" />
-            </label>
+            <div class="field">
+              <label>Contact person
+                <input class="input" name="contact_name" required placeholder="Full name"/>
+              </label>
+            </div>
+            <div class="field">
+              <label>Email
+                <input class="input" type="email" name="contact_email" required placeholder="name@org.com"/>
+              </label>
+            </div>
+            <div class="field">
+              <label>Phone (optional)
+                <input class="input" type="tel" name="contact_phone" placeholder="+61 ..."/>
+              </label>
+            </div>
           </div>
         </div>
 
         <!-- Devices -->
-        <div class="card" style="display:grid; gap:12px;">
-          <h3>Devices You’re Disposing</h3>
-          <div class="muted">Select all that apply.</div>
+        <div class="card form-card lift">
+          <header class="card-head">
+            <h3>Devices You’re Disposing</h3>
+            <p class="sub">Select all that apply, add an estimate, and logistics.</p>
+          </header>
 
-          <!-- chips -->
-          <div class="chip-grid">
-            <label class="chip-check">
-              <input type="checkbox" name="types" value="laptops" />
-              <span>Laptops</span>
-            </label>
-            <label class="chip-check">
-              <input type="checkbox" name="types" value="desktops" />
-              <span>Desktops</span>
-            </label>
-            <label class="chip-check">
-              <input type="checkbox" name="types" value="monitors" />
-              <span>Monitors</span>
-            </label>
-            <label class="chip-check">
-              <input type="checkbox" name="types" value="tablets" />
-              <span>Tablets</span>
-            </label>
-            <label class="chip-check">
-              <input type="checkbox" name="types" value="phones" />
-              <span>Phones</span>
-            </label>
-            <label class="chip-check">
-              <input type="checkbox" name="types" value="other" />
-              <span>Other</span>
-            </label>
+          <div class="field">
+            <div class="label-row">Types of devices</div>
+            <div class="chip-grid">
+              <label class="chip-check">
+                <input type="checkbox" name="types" value="laptops"><span>Laptops</span>
+              </label>
+              <label class="chip-check">
+                <input type="checkbox" name="types" value="desktops"><span>Desktops</span>
+              </label>
+              <label class="chip-check">
+                <input type="checkbox" name="types" value="monitors"><span>Monitors</span>
+              </label>
+              <label class="chip-check">
+                <input type="checkbox" name="types" value="tablets"><span>Tablets</span>
+              </label>
+              <label class="chip-check">
+                <input type="checkbox" name="types" value="phones"><span>Phones</span>
+              </label>
+              <label class="chip-check">
+                <input type="checkbox" name="types" value="other"><span>Other</span>
+              </label>
+            </div>
           </div>
 
           <div class="grid-3">
-            <label>Approx. quantity
-              <input class="input" type="number" min="1" name="quantity" inputmode="numeric" />
-              <small class="help">Rough totals are fine (e.g., 120–150).</small>
-            </label>
-            <label>Pickup or shipment?
-              <select class="select" name="logistics">
-                <option value="pickup">Pickup</option>
-                <option value="shipment">Shipment</option>
-                <option value="both">Either / Both</option>
-              </select>
-            </label>
-            <label>Target timeline
-              <select class="select" name="timeline">
-                <option value="asap">ASAP (1–2 weeks)</option>
-                <option value="this_month">This month</option>
-                <option value="this_quarter">This quarter</option>
-                <option value="date_fixed">Fixed date (specify below)</option>
-              </select>
-            </label>
+            <div class="field">
+              <label>Approx. quantity
+                <input class="input" type="number" min="1" name="quantity" placeholder="e.g., 120"/>
+              </label>
+              <span class="help">A ballpark figure is fine.</span>
+            </div>
+
+            <div class="field">
+              <label>Pickup or shipment?
+                <select class="select" name="logistics">
+                  <option value="pickup">Pickup</option>
+                  <option value="shipment">Shipment</option>
+                  <option value="both">Either / Both</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="field">
+              <label>Target timeline
+                <select class="select" name="timeline">
+                  <option value="asap">ASAP (1–2 weeks)</option>
+                  <option value="this_month">This month</option>
+                  <option value="this_quarter">This quarter</option>
+                  <option value="date_fixed">Fixed date (specify below)</option>
+                </select>
+              </label>
+            </div>
           </div>
 
-          <div class="grid-2">
+          <div class="field">
             <label>Pickup / site locations
-              <input class="input" name="locations" placeholder="e.g., Perth CBD; Joondalup; Fremantle" />
-              <small class="help">City, state or postcode—add multiple separated by semicolons.</small>
-            </label>
-            <label>Preferred fixed date (optional)
-              <input class="input" type="date" name="preferred_date" />
+              <input class="input" name="locations" placeholder="e.g., Perth CBD; Joondalup; Fremantle"/>
             </label>
           </div>
         </div>
 
-        <!-- Compliance & Notes -->
-        <div class="card" style="display:grid; gap:12px;">
-          <h3>Compliance & Notes</h3>
-          <label>Any specific erasure policy or compliance requirements?
-            <textarea class="input" name="compliance" placeholder="e.g., NIST 800-88-aligned, reporting format, chain-of-custody details"></textarea>
-          </label>
+        <!-- Compliance / Notes -->
+        <div class="card form-card lift">
+          <header class="card-head">
+            <h3>Compliance & Notes</h3>
+            <p class="sub">Standards, reporting format, constraints, or fixed dates.</p>
+          </header>
 
-          <label>Additional notes
-            <textarea class="input" name="notes" placeholder="Anything else we should know (site access, timing constraints, etc.)"></textarea>
-          </label>
+          <div class="grid-2">
+            <label>Erasure policy or compliance requirements
+              <textarea class="input" name="compliance" placeholder="e.g., NIST 800-88 aligned, reporting format, chain-of-custody details"></textarea>
+            </label>
 
-          <p class="muted" style="margin:4px 0 0;">We’ll only use these details to respond to your request. No marketing spam.</p>
+            <label>Additional notes / fixed dates
+              <textarea class="input" name="notes" placeholder="Anything else we should know"></textarea>
+            </label>
+          </div>
         </div>
 
         <!-- Actions -->
-        <div class="card" style="display:flex; gap:10px; align-items:center; justify-content:flex-end;">
-          <a class="cta ghost" href="/">Cancel</a>
+        <div class="actions-bar">
+          <button class="btn ghost" type="reset">Reset</button>
           <button class="cta" type="submit">Send Request</button>
         </div>
       </form>
 
-      <!-- sticky summary -->
-      <aside class="card sticky">
-        <p class="eyebrow">What You’ll Get</p>
-        <ul class="benefits">
-          <li><span class="icon-circle">🔒</span> Verified data erasure (NIST 800-88 aligned)</li>
-          <li><span class="icon-circle">📄</span> Wipe confirmation & batch report</li>
-          <li><span class="icon-circle">🧼</span> Refurbish & functional checks</li>
-          <li><span class="icon-circle">🏷️</span> A/B/C grading & transparent pricing</li>
-          <li><span class="icon-circle">🚚</span> Pickup coordination or shipment guidance</li>
-        </ul>
+      <!-- ASIDE COLUMN -->
+      <aside class="sticky">
+        <div class="card lift">
+          <header class="card-head">
+            <div class="eyebrow">What you’ll get</div>
+            <h3 style="margin:6px 0 0">Clear, verifiable outcomes</h3>
+          </header>
 
-        <div class="divider"></div>
+          <ul class="benefits">
+            <li><span class="icon-circle">🔒</span>Verified data erasure (NIST 800-88 aligned)</li>
+            <li><span class="icon-circle">🧾</span>Wipe confirmation & batch report</li>
+            <li><span class="icon-circle">🧰</span>Refurbish & functional checks</li>
+            <li><span class="icon-circle">🏷️</span>A/B/C grading & transparent pricing</li>
+            <li><span class="icon-circle">🔗</span>Chain-of-custody & simple scheduling</li>
+          </ul>
 
-        <p class="eyebrow">Typical Turnaround</p>
-        <p class="muted" style="margin-top:6px;">Pickup in 3–7 business days depending on location and volume. Wipe + refurb lead time varies by batch size.</p>
-
-        <div class="divider"></div>
-
-        <p class="eyebrow">Questions?</p>
-        <p class="muted" style="margin-top:6px;">Prefer to talk first? Reach us at <a href="mailto:support@example.com">support@example.com</a>.</p>
+          <div class="divider"></div>
+          <p class="muted" style="margin:0;">
+            We can also support internal redeploy (instead of resale) where it fits your policy.
+          </p>
+        </div>
       </aside>
     </div>
   </section>

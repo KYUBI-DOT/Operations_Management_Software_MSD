@@ -413,3 +413,38 @@ textarea.input { min-height: 120px; line-height: 1.5; }
 
 /* sticky aside offset below the sticky header */
 .sticky { top: 88px; }
+
+/* ===== Shop polish ===== */
+.toolbar{
+  max-width:1100px; margin:0 auto; display:flex; gap:10px; align-items:center;
+}
+.toolbar .input{ min-width:260px; }
+.toolbar-spacer{ flex:1; }
+.count-badge{
+  font-size:12px; color:#475569; background:#f1f5f9; border:1px solid #e2e8f0;
+  padding:6px 10px; border-radius:999px; font-weight:700;
+}
+
+.cards--media .media{ display:flex; gap:14px; align-items:center; }
+.cards--media .media img{ width:110px; height:80px; object-fit:cover; border-radius:12px; }
+.media-body .meta-row{ margin:0 0 8px; }
+
+.price-lg{
+  font-size:22px; font-weight:800; letter-spacing:.2px; margin:4px 0 10px;
+}
+
+.cta-row{ display:flex; gap:10px; flex-wrap:wrap; }
+.btn.small, .cta.small{ padding:8px 12px; border-radius:10px; font-weight:700; }
+.btn.small{
+  background:#fff; border:1px solid #cbd5e1; color:#334155; box-shadow:0 2px 6px rgba(0,0,0,.04);
+}
+.btn.small:hover{ background:#f8fafc; }
+
+/* grade badges */
+.grade-badge{
+  display:inline-block; font-size:12px; font-weight:700; padding:4px 10px; border-radius:999px;
+  border:1px solid #e5e7eb; background:#fff; color:#334155;
+}
+.grade-A{ background:#ecfdf5; border-color:#bbf7d0; color:#15803d; }  /* green */
+.grade-B{ background:#fffbeb; border-color:#fde68a; color:#92400e; }  /* amber */
+.grade-C{ background:#f1f5f9; border-color:#e2e8f0; color:#334155; }  /* neutral */

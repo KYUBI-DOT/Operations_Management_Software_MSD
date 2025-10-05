@@ -4,8 +4,6 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title><%= title || 'Shop' %></title>
-
-  <!-- Public site CSS -->
   <link rel="stylesheet" href="/home.css?v=<%= cacheBuster %>">
 </head>
 <body>
@@ -16,7 +14,7 @@
     <nav class="nav">
       <a class="<%= (active==='home') ? 'active' : '' %>" href="/">Home</a>
       <a class="<%= (active==='shop') ? 'active' : '' %>" href="/shop">Shop</a>
-        <a class="<%= active==='partner' ? 'active' : '' %>" href="/partner">Partner</a>
+      <a class="<%= active==='partner' ? 'active' : '' %>" href="/partner">Partner</a>
     </nav>
 
     <div class="nav-actions">
@@ -32,38 +30,148 @@
   </header>
 
   <!-- hero -->
-  <main class="hero" style="padding-block:60px;">
-    <h1>Devices Available for Purchase</h1>
-    <p>Certified devices ready for sale. Grades reflect cosmetic/functional quality.</p>
+  <main class="hero hero--soft" style="padding-block:56px;">
+    <div class="eyebrow">Certified Devices</div>
+    <h1 class="hero-title">Devices Available for Purchase</h1>
+    <p class="hero-sub">All units are wiped, refurbished and graded. Grades reflect cosmetic/functional quality.</p>
   </main>
 
   <% const items = (typeof devices !== 'undefined' && Array.isArray(devices)) ? devices : []; %>
 
-  <!-- product grid -->
-  <section class="features" style="padding-top:30px;">
-    <div class="cards" style="max-width:1100px;">
-      <% items.forEach(it => { %>
-        <div class="card">
-          <h3><%= (it.brand ? it.brand + ' ' : '') + it.model %></h3>
-          <p class="muted">Grade: <strong><%= it.grade %></strong></p>
-          <p style="margin:.25rem 0 1rem;">
-            <strong>$<%= (it.price != null ? Number(it.price) : 0).toFixed(0) %></strong>
-          </p>
-          <a class="cta" href="#">Add to cart</a>
-        </div>
-      <% }) %>
+  <!-- toolbar -->
+  <section class="section" style="padding-top:18px; padding-bottom:0;">
+    <div class="toolbar">
+      <input id="q" class="input" placeholder="Search brand or model…" aria-label="Search">
+      <select id="grade" class="select" aria-label="Filter grade">
+        <option value="">All grades</option>
+        <option value="A">Grade A</option>
+        <option value="B">Grade B</option>
+        <option value="C">Grade C</option>
+      </select>
+      <select id="sort" class="select" aria-label="Sort">
+        <option value="newest">Newest</option>
+        <option value="price-asc">Price: Low → High</option>
+        <option value="price-desc">Price: High → Low</option>
+      </select>
 
+      <div class="toolbar-spacer"></div>
+      <button id="clear" class="btn ghost" type="button">Clear</button>
+      <span id="count" class="count-badge"><%= items.length %> items</span>
+    </div>
+  </section>
+
+  <!-- product grid -->
+  <section class="features" style="padding-top:22px;">
+    <div id="grid" class="cards cards--media" style="max-width:1100px;">
       <% if (items.length === 0) { %>
-        <div class="card" style="grid-column:1/-1; text-align:center;">
+        <div class="card lift" style="grid-column:1/-1; text-align:center;">
           <h3>No devices available right now</h3>
           <p class="muted">Please check back soon — new stock is added regularly.</p>
         </div>
       <% } %>
+
+      <% items.forEach(it => {
+           const brand   = (it.brand || '').trim();
+           const model   = (it.model || '').trim();
+           const grade   = (it.grade || '').trim();
+           const price   = (it.price != null ? Number(it.price) : 0);
+           const id      = Number(it.id || 0);
+           const brandKey = brand.toLowerCase().replace(/\s+/g,'-'); // for optional brand image
+      %>
+        <article
+          class="card product lift"
+          data-brand="<%= brand.toLowerCase() %>"
+          data-model="<%= model.toLowerCase() %>"
+          data-grade="<%= grade %>"
+          data-price="<%= price %>"
+          data-id="<%= id %>"
+        >
+          <div class="media">
+            <!-- Optional brand art: hides if not found -->
+            <img src="/images/brands/<%= brandKey %>.jpg"
+                 alt="<%= brand || 'Device' %>"
+                 onerror="this.style.display='none'">
+
+            <div class="media-body">
+              <h3 style="margin:0 0 4px;"><%= brand ? brand + ' ' : '' %><%= model %></h3>
+              <div class="meta-row">
+                <span class="grade-badge grade-<%= grade %>"><%= grade ? ('Grade ' + grade) : 'Ungraded' %></span>
+              </div>
+
+              <div class="price-lg">$<%= price.toFixed(0) %></div>
+
+              <div class="cta-row">
+               <a class="btn small" href="#" aria-disabled="true">Details</a>
+
+               <form method="post" action="/cart/add" class="inline">
+                <input type="hidden" name="id"    value="<%= id %>">
+                <input type="hidden" name="brand" value="<%= brand %>">
+                <input type="hidden" name="model" value="<%= model %>">
+                <input type="hidden" name="grade" value="<%= grade %>">
+                <input type="hidden" name="price" value="<%= price %>">
+               <button class="cta small" type="submit">Add to cart</button>
+              </form>
+             </div>
+
+            </div>
+          </div>
+        </article>
+      <% }) %>
     </div>
   </section>
 
   <footer class="footer">
     <p>© <%= new Date().getFullYear() %> Refurb Admin. All rights reserved.</p>
   </footer>
+
+  <script>
+    (function(){
+      const qEl     = document.getElementById('q');
+      const gEl     = document.getElementById('grade');
+      const sEl     = document.getElementById('sort');
+      const grid    = document.getElementById('grid');
+      const cards   = Array.from(grid.querySelectorAll('.product'));
+      const countEl = document.getElementById('count');
+      const clearEl = document.getElementById('clear');
+
+      function apply() {
+        const q = (qEl.value || '').trim().toLowerCase();
+        const g = gEl.value;
+
+        let shown = 0;
+        cards.forEach(c => {
+          const hay = (c.dataset.brand + ' ' + c.dataset.model);
+          const matchesQ = !q || hay.includes(q);
+          const matchesG = !g || (c.dataset.grade === g);
+          const show = matchesQ && matchesG;
+          c.style.display = show ? '' : 'none';
+          if (show) shown++;
+        });
+
+        // sort visible cards by choice
+        const order = sEl.value;
+        const visible = cards.filter(c => c.style.display !== 'none');
+        visible.sort((a,b) => {
+          if (order === 'price-asc')  return (+a.dataset.price) - (+b.dataset.price);
+          if (order === 'price-desc') return (+b.dataset.price) - (+a.dataset.price);
+          // newest by id desc fallback
+          if (order === 'newest')     return (+b.dataset.id) - (+a.dataset.id);
+          return 0;
+        });
+        visible.forEach(el => grid.appendChild(el)); // reflow
+
+        countEl.textContent = shown + ' item' + (shown===1?'':'s');
+      }
+
+      qEl.addEventListener('input', apply);
+      gEl.addEventListener('change', apply);
+      sEl.addEventListener('change', apply);
+      clearEl.addEventListener('click', () => {
+        qEl.value = ''; gEl.value=''; sEl.value='newest'; apply();
+      });
+
+      apply();
+    })();
+  </script>
 </body>
 </html>

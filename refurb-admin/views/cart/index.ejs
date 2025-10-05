@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/home.css?v=<%= cacheBuster %>">
+</head>
+<body>
+<header class="home-header">
+  <div class="logo">🛍️ Your Cart</div>
+  <nav class="nav">
+    <a href="/" class="<%= active==='home' ? 'active' : '' %>">Home</a>
+    <a href="/shop" class="<%= active==='shop' ? 'active' : '' %>">Shop</a>
+    <a href="/partner" class="<%= active==='partner' ? 'active' : '' %>">Partner</a>
+  </nav>
+  <div class="nav-actions">
+    <% if (!isAuthed) { %><a class="btn-admin" href="/login">Admin</a><% } else { %>
+      <a class="btn-admin" href="/dashboard">Dashboard</a>
+      <form method="post" action="/logout" style="display:inline">
+        <button class="btn-admin btn-outline" type="submit">Logout</button>
+      </form>
+    <% } %>
+  </div>
+</header>
+
+<main class="hero hero--soft" style="padding-block:38px;">
+  <div class="eyebrow">Cart</div>
+  <h1 class="hero-title">Review your items</h1>
+  <p class="hero-sub">Adjust quantities or proceed to checkout.</p>
+</main>
+
+<section class="section" style="padding-top:24px;">
+  <div class="layout-2col">
+    <!-- left: items -->
+    <div class="card lift">
+      <% if (!cart.length) { %>
+        <p class="muted" style="margin:0">Your cart is empty.</p>
+        <div style="margin-top:12px">
+          <a class="cta" href="/shop">Browse devices</a>
+        </div>
+      <% } else { %>
+        <div class="cart-table">
+          <div class="cart-head">
+            <div>Item</div>
+            <div>Grade</div>
+            <div>Price</div>
+            <div>Qty</div>
+            <div>Total</div>
+            <div></div>
+          </div>
+
+          <% cart.forEach(it => { const line = Number(it.price) * Number(it.qty); %>
+            <div class="cart-row">
+              <div>
+                <strong><%= (it.brand ? it.brand + ' ' : '') + it.model %></strong>
+              </div>
+              <div><span class="grade-badge grade-<%= it.grade %>"><%= it.grade || '—' %></span></div>
+              <div>$<%= Number(it.price).toFixed(2) %></div>
+              <div>
+                <form method="post" action="/cart/update" class="inline">
+                  <input type="hidden" name="id" value="<%= it.id %>">
+                  <input class="qty" type="number" min="0" name="qty" value="<%= it.qty %>" />
+                  <button class="btn small" type="submit">Update</button>
+                </form>
+              </div>
+              <div>$<%= line.toFixed(2) %></div>
+              <div>
+                <form method="post" action="/cart/remove" class="inline">
+                  <input type="hidden" name="id" value="<%= it.id %>">
+                  <button class="btn small" type="submit">Remove</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- right: summary -->
+    <aside class="card sticky lift">
+      <h3 style="margin:0 0 10px;">Order Summary</h3>
+      <div class="summary-row"><span>Subtotal</span><strong>$<%= totals.subtotal.toFixed(2) %></strong></div>
+      <div class="summary-row"><span>Tax (10%)</span><strong>$<%= totals.tax.toFixed(2) %></strong></div>
+      <div class="summary-row"><span>Shipping</span><strong>$<%= totals.shipping.toFixed(2) %></strong></div>
+      <div class="divider"></div>
+      <div class="summary-row total"><span>Total</span><strong>$<%= totals.total.toFixed(2) %></strong></div>
+
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <a class="btn" href="/shop">Continue shopping</a>
+        <% if (cart.length) { %>
+          <a class="cta" href="/cart/checkout">Checkout</a>
+        <% } %>
+      </div>
+
+      <% if (cart.length) { %>
+        <form method="post" action="/cart/clear" style="margin-top:10px;">
+          <button class="btn small" type="submit">Clear cart</button>
+        </form>
+      <% } %>
+    </aside>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>© <%= new Date().getFullYear() %> Refurb Admin. All rights reserved.</p>
+</footer>
+</body>
+</html>

@@ -12,6 +12,7 @@ import db from "./db.js";
 import revenueRoutes from "./routes/revenue.js";
 import shopRoutes from "./routes/shop.js";
 import devicesRoutes from "./routes/devices.js";
+import cartRoutes from "./routes/cart.js";
 
 dotenv.config();
 
@@ -80,6 +81,7 @@ app.get("/", (_req, res) =>
 );
 
 app.use("/shop", shopRoutes);
+app.use("/cart", cartRoutes);
 
 // Public: Partner With Us (form)
 app.get("/partner", (req, res) => {

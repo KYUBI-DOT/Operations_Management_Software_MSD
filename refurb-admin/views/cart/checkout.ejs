@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/home.css?v=<%= cacheBuster %>">
+</head>
+<body>
+<header class="home-header">
+  <div class="logo">💳 Checkout</div>
+  <nav class="nav">
+    <a href="/" class="<%= active==='home' ? 'active' : '' %>">Home</a>
+    <a href="/shop" class="<%= active==='shop' ? 'active' : '' %>">Shop</a>
+    <a href="/partner" class="<%= active==='partner' ? 'active' : '' %>">Partner</a>
+  </nav>
+  <div class="nav-actions">
+    <% if (!isAuthed) { %><a class="btn-admin" href="/login">Admin</a><% } else { %>
+      <a class="btn-admin" href="/dashboard">Dashboard</a>
+      <form method="post" action="/logout" style="display:inline">
+        <button class="btn-admin btn-outline" type="submit">Logout</button>
+      </form>
+    <% } %>
+  </div>
+</header>
+
+<main class="hero hero--soft" style="padding-block:38px;">
+  <div class="eyebrow">Checkout</div>
+  <h1 class="hero-title">Billing & Payment</h1>
+  <p class="hero-sub">Provide your details and confirm your order.</p>
+</main>
+
+<section class="section" style="padding-top:24px;">
+  <div class="layout-2col">
+    <form class="card lift" method="post" action="/cart/checkout">
+      <h3 style="margin:0 0 12px;">Billing details</h3>
+
+      <div class="grid-2">
+        <label>Full name
+          <input class="input" name="full_name" value="<%= form.full_name || '' %>" required>
+          <% if (errors.full_name) { %><span class="help"><%= errors.full_name %></span><% } %>
+        </label>
+        <label>Email
+          <input class="input" type="email" name="email" value="<%= form.email || '' %>" required>
+          <% if (errors.email) { %><span class="help"><%= errors.email %></span><% } %>
+        </label>
+      </div>
+
+      <div class="grid-2">
+        <label>Phone (optional)
+          <input class="input" name="phone" value="<%= form.phone || '' %>">
+        </label>
+      </div>
+
+      <div class="grid-2">
+        <label>Address
+          <input class="input" name="address" value="<%= form.address || '' %>" required>
+          <% if (errors.address) { %><span class="help"><%= errors.address %></span><% } %>
+        </label>
+        <label>City
+          <input class="input" name="city" value="<%= form.city || '' %>" required>
+          <% if (errors.city) { %><span class="help"><%= errors.city %></span><% } %>
+        </label>
+      </div>
+
+      <div class="grid-3">
+        <label>State
+          <input class="input" name="state" value="<%= form.state || '' %>">
+        </label>
+        <label>Postcode
+          <input class="input" name="postcode" value="<%= form.postcode || '' %>" required>
+          <% if (errors.postcode) { %><span class="help"><%= errors.postcode %></span><% } %>
+        </label>
+        <label>Payment method
+          <select class="select" name="pay_method">
+            <option value="card"  <%= form.pay_method==='card'?'selected':'' %>>Card (test)</option>
+            <option value="bank"  <%= form.pay_method==='bank'?'selected':'' %>>Bank transfer</option>
+          </select>
+        </label>
+      </div>
+
+      <div style="margin-top:12px; display:flex; gap:10px;">
+        <a class="btn" href="/cart">Back to cart</a>
+        <button class="cta" type="submit">Place order</button>
+      </div>
+    </form>
+
+    <aside class="card sticky lift">
+      <h3 style="margin:0 0 10px;">Order Summary</h3>
+      <% cart.forEach(it => { %>
+        <div class="summary-line">
+          <div><strong><%= (it.brand ? it.brand + ' ' : '') + it.model %></strong> <span class="muted">× <%= it.qty %></span></div>
+          <div>$<%= (Number(it.price)*Number(it.qty)).toFixed(2) %></div>
+        </div>
+      <% }) %>
+      <div class="divider"></div>
+      <div class="summary-row"><span>Subtotal</span><strong>$<%= totals.subtotal.toFixed(2) %></strong></div>
+      <div class="summary-row"><span>Tax (10%)</span><strong>$<%= totals.tax.toFixed(2) %></strong></div>
+      <div class="summary-row"><span>Shipping</span><strong>$<%= totals.shipping.toFixed(2) %></strong></div>
+      <div class="summary-row total"><span>Total</span><strong>$<%= totals.total.toFixed(2) %></strong></div>
+    </aside>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>© <%= new Date().getFullYear() %> Refurb Admin. All rights reserved.</p>
+</footer>
+</body>
+</html>

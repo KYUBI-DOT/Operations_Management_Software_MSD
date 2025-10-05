@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/home.css?v=<%= cacheBuster %>">
+</head>
+<body>
+<header class="home-header">
+  <div class="logo">✅ Order Success</div>
+  <nav class="nav">
+    <a href="/" class="active">Home</a>
+    <a href="/shop">Shop</a>
+    <a href="/partner">Partner</a>
+  </nav>
+  <div class="nav-actions">
+    <% if (!isAuthed) { %><a class="btn-admin" href="/login">Admin</a><% } else { %>
+      <a class="btn-admin" href="/dashboard">Dashboard</a>
+      <form method="post" action="/logout" style="display:inline">
+        <button class="btn-admin btn-outline" type="submit">Logout</button>
+      </form>
+    <% } %>
+  </div>
+</header>
+
+<main class="hero hero--soft" style="padding-block:46px;">
+  <div class="eyebrow">Thank you</div>
+  <h1 class="hero-title">Order #<%= order.id %> confirmed</h1>
+  <p class="hero-sub">We’ve emailed <strong><%= order.email %></strong> a confirmation. Payment method: <strong><%= order.pay_method %></strong>.</p>
+</main>
+
+<section class="section">
+  <div class="card lift" style="max-width:900px; margin:0 auto;">
+    <% order.items.forEach(it => { %>
+      <div class="summary-line">
+        <div><strong><%= (it.brand ? it.brand + ' ' : '') + it.model %></strong> <span class="muted">× <%= it.qty %></span></div>
+        <div>$<%= (Number(it.price)*Number(it.qty)).toFixed(2) %></div>
+      </div>
+    <% }) %>
+    <div class="divider"></div>
+    <div class="summary-row"><span>Subtotal</span><strong>$<%= order.totals.subtotal.toFixed(2) %></strong></div>
+    <div class="summary-row"><span>Tax</span><strong>$<%= order.totals.tax.toFixed(2) %></strong></div>
+    <div class="summary-row"><span>Shipping</span><strong>$<%= order.totals.shipping.toFixed(2) %></strong></div>
+    <div class="summary-row total"><span>Total</span><strong>$<%= order.totals.total.toFixed(2) %></strong></div>
+
+    <div style="margin-top:12px;">
+      <a class="cta" href="/shop">Continue shopping</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>© <%= new Date().getFullYear() %> Refurb Admin. All rights reserved.</p>
+</footer>
+</body>
+</html>

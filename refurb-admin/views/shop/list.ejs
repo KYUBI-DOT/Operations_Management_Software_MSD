@@ -101,9 +101,18 @@
               <div class="price-lg">$<%= price.toFixed(0) %></div>
 
               <div class="cta-row">
-                <a class="btn small" href="#" aria-disabled="true">Details</a>
-                <a class="cta small" href="#" aria-disabled="true">Add to cart</a>
-              </div>
+               <a class="btn small" href="#" aria-disabled="true">Details</a>
+
+               <form method="post" action="/cart/add" class="inline">
+                <input type="hidden" name="id"    value="<%= id %>">
+                <input type="hidden" name="brand" value="<%= brand %>">
+                <input type="hidden" name="model" value="<%= model %>">
+                <input type="hidden" name="grade" value="<%= grade %>">
+                <input type="hidden" name="price" value="<%= price %>">
+               <button class="cta small" type="submit">Add to cart</button>
+              </form>
+             </div>
+
             </div>
           </div>
         </article>

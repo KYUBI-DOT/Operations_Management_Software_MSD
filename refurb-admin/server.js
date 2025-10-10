@@ -52,7 +52,7 @@ app.use(
   })
 );
 
-// expose helpers to EJS
+// Expose helpers to EJS
 app.use((req, res, next) => {
   res.locals.cacheBuster = Date.now();
   res.locals.isAuthed = !!req.session.user;
@@ -63,7 +63,7 @@ app.use((req, res, next) => {
 });
 
 // -------------------------------
-// Auth helpers
+// Auth helper
 // -------------------------------
 function requireAuth(req, res, next) {
   if (!req.session.user) {
@@ -88,7 +88,7 @@ app.get("/partner", (req, res) => {
   res.render("home/partner", {
     title: "Partner With Us",
     active: "partner",
-    sent: req.query.sent === "1", 
+    sent: req.query.sent === "1",
   });
 });
 
@@ -110,8 +110,8 @@ app.post("/partner", (req, res) => {
   const types = Array.isArray(req.body.types)
     ? req.body.types
     : req.body.types
-      ? [req.body.types]
-      : [];
+    ? [req.body.types]
+    : [];
 
   // For now: log it (later we can store/email)
   console.log("[PARTNER REQUEST]", {
@@ -132,7 +132,6 @@ app.post("/partner", (req, res) => {
   res.redirect("/partner?sent=1");
 });
 
-
 // -------------------------------
 // Login / Logout
 // -------------------------------
@@ -150,9 +149,18 @@ app.post("/login", async (req, res) => {
   const { username = "", password = "", next: nextUrl = "" } = req.body;
 
   const okUser = username.trim() === (process.env.ADMIN_USER || "admin");
-  const okPass =
-    !!process.env.ADMIN_PASS_HASH &&
-    (await bcrypt.compare(password, process.env.ADMIN_PASS_HASH));
+
+  // Allow either bcrypt hash or plain text password from .env
+  let okPass = false;
+  try {
+    if (process.env.ADMIN_PASS_HASH) {
+      okPass = await bcrypt.compare(password, process.env.ADMIN_PASS_HASH);
+    } else if (process.env.ADMIN_PASS) {
+      okPass = password === process.env.ADMIN_PASS;
+    }
+  } catch (e) {
+    okPass = false;
+  }
 
   if (!okUser || !okPass) {
     return res.status(401).render("auth/login", {
@@ -214,6 +222,6 @@ app.get("/dashboard", requireAuth, async (_req, res) => {
 // -------------------------------
 // Server
 // -------------------------------
-app.listen(PORT, () =>
-  console.log(`🚀 Refurb Admin running at http://localhost:${PORT}`)
-);
+app.listen(PORT, () => {
+  console.log(`🚀 Refurb Admin running at http://localhost:${PORT}`);
+});
